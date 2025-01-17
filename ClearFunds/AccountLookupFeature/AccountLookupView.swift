@@ -16,10 +16,12 @@ struct AccountLookupView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                List {
-                    ForEach(store.accounts) { account in
+                List(store.accounts) { account in
+                    NavigationLink(destination: AccountDetailView(account: account)) {
                         HStack {
                             Text(account.name)
+                            Spacer()
+                            Text("Balance: \(account.balance, format: .currency(code: account.currency ?? "USD"))")
                         }
                     }
                 }
