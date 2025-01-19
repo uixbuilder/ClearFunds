@@ -1,6 +1,6 @@
 //
-//  ClearFundsTests.swift
-//  ClearFundsTests
+//  DomainModelsParsingTests.swift
+//  DomainModelsParsingTests
 //
 //  Created by Igor Fedorov on 16.01.2025.
 //
@@ -11,8 +11,9 @@ import Foundation
 
 class BundleHelper {}
 
-struct ClearFundsTests {
-    @Test func accountsParsing() async throws {
+struct DomainModelsParsingTests {
+    @Test
+    func accountsParsing() async throws {
         guard let pathString = Bundle(for: BundleHelper.self).path(forResource: "Accounts", ofType: "json") else {
             fatalError("Accounts.json not found")
         }
