@@ -76,7 +76,8 @@ extension IdentifiedArray where Element == Transaction, ID == String {
                     receiver: .init(
                         accountNumber: "000000-2906478309",
                         bankCode: "0800",
-                        iban: "CZ13 0800 0000 0029 0647 8309"
+                        iban: "CZ13 0800 0000 0029 0647 8309",
+                        name: "Jiří Novák"
                     ),
                     typeDescription: "Poplatky"
                 )

@@ -52,7 +52,8 @@ struct AccountLookupFeature {
                 
             case .alert(.presented(.retryAccountCaching)):
                 state.accountsIsCaching = true
-                return makeLoadPageEffect(state.query, page: state.cachedAccounts.count / cachingPageSize)
+                let nextPageIndex = state.cachedAccounts.count / cachingPageSize
+                return makeLoadPageEffect(state.query, page:nextPageIndex)
                 
             case .alert:
                 return .none
@@ -135,7 +136,7 @@ struct AccountLookupFeature {
     {
         .run { send in
             await send(.dataResponse(Result {
-                try await dataProvider.accounts(query: query, page: page, pageSize: cachingPageSize)
+                try await dataProvider.accounts(query, .init(page: page, pageSize: cachingPageSize))
             }))
         }
         .cancellable(id: CancelID.pageLoading, cancelInFlight: true)

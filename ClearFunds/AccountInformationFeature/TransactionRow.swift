@@ -101,7 +101,8 @@ extension Transaction {
         receiver: .init(
             accountNumber: "000000-2906478309",
             bankCode: "0800",
-            iban: "CZ13 0800 0000 0029 0647 8309"
+            iban: "CZ13 0800 0000 0029 0647 8309",
+            name: "Julia Roberts"
         ),
         typeDescription: "Poplatky"
     )
@@ -125,7 +126,8 @@ extension Transaction {
             receiver: .init(
                 accountNumber: "000000-2906478309",
                 bankCode: "0800",
-                iban: "CZ13 0800 0000 0029 0647 8309"
+                iban: "CZ13 0800 0000 0029 0647 8309",
+                name: "Antonio Ramez"
             ),
             typeDescription: "Salary"
         )

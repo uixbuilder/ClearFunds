@@ -19,7 +19,9 @@ struct AccountLookupFeatureTests {
         let store = TestStore(initialState: AccountLookupFeature.State()) {
             AccountLookupFeature()
         } withDependencies: {
-            $0.dataProvider = TransparencyDataClient(accounts: {_,_,_ in await mockResponse(mockAccounts())})
+            $0.dataProvider = TransparencyDataClient(
+                accounts: {_,_ in await mockPageResponse(mockAccounts())},
+                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
         }
         
         await store.send(.queryDidChange("test")) {
@@ -30,11 +32,13 @@ struct AccountLookupFeatureTests {
     @Test
     func startLoadingAccountsSuccess() async {
         let mockAccounts = mockAccounts()
-        let mockResponse = mockResponse(mockAccounts)
+        let mockResponse = mockPageResponse(mockAccounts)
         let store = TestStore(initialState: AccountLookupFeature.State()) {
             AccountLookupFeature()
         } withDependencies: {
-            $0.dataProvider = TransparencyDataClient(accounts: {_,_,_ in mockResponse})
+            $0.dataProvider = TransparencyDataClient(
+                accounts: {_,_ in mockResponse},
+                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
         }
         
         await store.send(.startLoadingAccounts) {
@@ -54,9 +58,9 @@ struct AccountLookupFeatureTests {
         let store = TestStore(initialState: AccountLookupFeature.State()) {
             AccountLookupFeature()
         } withDependencies: {
-            $0.dataProvider = TransparencyDataClient(accounts: {_,_,_ in
-                throw TransparencyDataClient.Error.apiError(.tooManyRequests)
-            })
+            $0.dataProvider = TransparencyDataClient(
+                accounts: {_,_ in throw TransparencyDataClient.Error.apiError(.tooManyRequests)},
+                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
         }
         
         await store.send(.startLoadingAccounts) {
@@ -93,7 +97,9 @@ struct AccountLookupFeatureTests {
         let store = TestStore(initialState: AccountLookupFeature.State()) {
             AccountLookupFeature()
         } withDependencies: {
-            $0.dataProvider = TransparencyDataClient(accounts: { _,_,_ in mockResponse })
+            $0.dataProvider = TransparencyDataClient(
+                accounts: {_,_ in mockResponse},
+                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
         }
         
         await store.send(.startLoadingAccounts) {
@@ -109,8 +115,8 @@ struct AccountLookupFeatureTests {
     @Test
     func retryAccountCaching() async {
         let mockAccounts = mockAccounts(count: 10)
-        let firstPageResponse = mockResponse(mockAccounts, pageSize: 5, pageNumber: 0)
-        let secondPageResponse = mockResponse(mockAccounts, pageSize: 5, pageNumber: 1)
+        let firstPageResponse = mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 0)
+        let secondPageResponse = mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 1)
         
         let store = TestStore(
             initialState: AccountLookupFeature.State(
@@ -119,7 +125,9 @@ struct AccountLookupFeatureTests {
                 alert: AlertState { TextState("Test") }
             ))
         { AccountLookupFeature() } withDependencies: {
-            $0.dataProvider = TransparencyDataClient(accounts: { _,_,_ in secondPageResponse })
+            $0.dataProvider = TransparencyDataClient(
+                accounts: {_,_ in secondPageResponse},
+                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
         }
         
         await store.send(.alert(.presented(.retryAccountCaching))) {
@@ -153,23 +161,23 @@ struct AccountLookupFeatureTests {
         }
     }
     
-    private func mockResponse(_ mockAccounts: [Account], pageSize: Int? = nil, pageNumber: Int? = nil)
-    -> PaginatedResponse<Account>
+    private func mockPageResponse<T: Identifiable>(_ mocks: [T], pageSize: Int? = nil, pageNumber: Int? = nil)
+    -> PaginatedResponse<T>
     {
-        let pageSize = pageSize ?? mockAccounts.count
+        let pageSize = pageSize ?? mocks.count
         let pageNumber = pageNumber ?? 0
         
-        let pages = stride(from: 0, to: mockAccounts.count, by: pageSize).map {
-            Array(mockAccounts[$0 ..< Swift.min($0 + pageSize, mockAccounts.count)])
+        let pages = stride(from: 0, to: mocks.count, by: pageSize).map {
+            Array(mocks[$0 ..< Swift.min($0 + pageSize, mocks.count)])
         }
         
-        return PaginatedResponse<Account>(
+        return PaginatedResponse<T>(
             items: pages[pageNumber],
             pageNumber: pageNumber,
             pageSize: pageSize,
             pageCount: pages.count,
             nextPage: pageNumber + 1 < pages.count ? pageNumber + 1 : 0,
-            recordCount: mockAccounts.count
+            recordCount: mocks.count
         )
     }
 }
