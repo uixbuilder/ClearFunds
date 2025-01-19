@@ -20,8 +20,8 @@ struct AccountLookupFeatureTests {
             AccountLookupFeature()
         } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
-                accounts: {_,_ in await mockPageResponse(mockAccounts())},
-                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
+                accounts: {_,_ in await .mockPageResponse(mockAccounts())},
+                transactions: {_,_,_,_ in fatalError()})
         }
         
         await store.send(.queryDidChange("test")) {
@@ -32,13 +32,13 @@ struct AccountLookupFeatureTests {
     @Test
     func startLoadingAccountsSuccess() async {
         let mockAccounts = mockAccounts()
-        let mockResponse = mockPageResponse(mockAccounts)
+        let mockResponse: PaginatedResponse<Account> = .mockPageResponse(mockAccounts)
         let store = TestStore(initialState: AccountLookupFeature.State()) {
             AccountLookupFeature()
         } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
                 accounts: {_,_ in mockResponse},
-                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
+                transactions: {_,_,_,_ in fatalError()})
         }
         
         await store.send(.startLoadingAccounts) {
@@ -60,7 +60,7 @@ struct AccountLookupFeatureTests {
         } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
                 accounts: {_,_ in throw TransparencyDataClient.Error.apiError(.tooManyRequests)},
-                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
+                transactions: {_,_,_,_ in fatalError()})
         }
         
         await store.send(.startLoadingAccounts) {
@@ -99,7 +99,7 @@ struct AccountLookupFeatureTests {
         } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
                 accounts: {_,_ in mockResponse},
-                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
+                transactions: {_,_,_,_ in fatalError()})
         }
         
         await store.send(.startLoadingAccounts) {
@@ -115,8 +115,8 @@ struct AccountLookupFeatureTests {
     @Test
     func retryAccountCaching() async {
         let mockAccounts = mockAccounts(count: 10)
-        let firstPageResponse = mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 0)
-        let secondPageResponse = mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 1)
+        let firstPageResponse: PaginatedResponse<Account> = .mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 0)
+        let secondPageResponse: PaginatedResponse<Account> = .mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 1)
         
         let store = TestStore(
             initialState: AccountLookupFeature.State(
@@ -127,7 +127,7 @@ struct AccountLookupFeatureTests {
         { AccountLookupFeature() } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
                 accounts: {_,_ in secondPageResponse},
-                transactions: {_,_,_,_ in throw NSError(domain: "test", code: 0, userInfo: nil)})
+                transactions: {_,_,_,_ in fatalError()})
         }
         
         await store.send(.alert(.presented(.retryAccountCaching))) {
@@ -145,25 +145,29 @@ struct AccountLookupFeatureTests {
     // MARK: - Private Methods
     
     private func mockAccounts(count: Int = 5) -> [Account] {
-        (0..<count).map { idx in
-            Account(
-                accountNumber: "0000-\(idx)000000000000",
-                bankCode: "0800",
-                transparencyFrom: Date(),
-                transparencyTo: Date(),
-                publicationTo: Date(),
-                actualizationDate: Date(),
-                balance: 100.20 * Double(idx),
-                currency: "CZK",
-                name: "Account \(idx)",
-                iban: "CZ000\(idx)0000000000000000000"
-            )
-        }
+        (0..<count).map(Account.mock(with:))
     }
-    
-    private func mockPageResponse<T: Identifiable>(_ mocks: [T], pageSize: Int? = nil, pageNumber: Int? = nil)
-    -> PaginatedResponse<T>
-    {
+}
+
+extension Account {
+    static func mock(with id: Int) -> Account {
+        Account(
+            accountNumber: "\(id)",
+            bankCode: "0800",
+            transparencyFrom: Date(),
+            transparencyTo: Date(),
+            publicationTo: Date(),
+            actualizationDate: Date(),
+            balance: 100.20 * Double(id),
+            currency: "CZK",
+            name: "Account \(id)",
+            iban: "CZ000\(id)0000000000000000000"
+        )
+    }
+}
+
+extension PaginatedResponse {
+    static func mockPageResponse(_ mocks: [T], pageSize: Int? = nil, pageNumber: Int? = nil) -> Self {
         let pageSize = pageSize ?? mocks.count
         let pageNumber = pageNumber ?? 0
         

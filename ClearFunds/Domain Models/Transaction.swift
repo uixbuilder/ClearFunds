@@ -49,7 +49,7 @@ struct Transaction: Identifiable, Decodable, Equatable, Hashable {
     }
     
     var id: String { sender.accountNumber + receiver.accountNumber +
-                     "\(processingDate.timeIntervalSinceReferenceDate)" }
+                     "\(processingDate.timeIntervalSinceReferenceDate)" + "\(amount.value)" }
     
     let amount: Amount
     let type: String
@@ -62,4 +62,8 @@ struct Transaction: Identifiable, Decodable, Equatable, Hashable {
 
 extension Transaction: PaginatableKeyed {
     static var collectionKey: String { "transactions" }
+}
+
+extension TransparencyDataClient.SortParameters.SortField {
+    static let processingDate = "processingDate"
 }

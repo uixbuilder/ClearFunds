@@ -27,12 +27,13 @@ struct TransparencyDataClient {
     }
 
     struct SortParameters: CustomStringConvertible {
+        typealias SortField = String
         enum SortOrder {
             case asc // default value is asc when the sort parameter is omitted
             case desc
         }
 
-        let sortField: String
+        let sortField: SortField
         let order: SortOrder
         
         var description: String {
@@ -85,13 +86,28 @@ extension TransparencyDataClient: DependencyKey {
         let originalResponse = try Self.jsonDecoder.decode(PaginatedResponse<Transaction>.self, from: data)
         let resultingPage = try Self.splitOnPagesAndFilter(
             originalResponse: originalResponse,
-            filter: filter != nil ? { $0.sender.name?.lowercased().contains(filter!.lowercased()) ?? false } : nil,
-            pagination: pagination
+            filter: filter?.isEmpty == false ? { $0.sender.name?.lowercased().contains(filter!.lowercased()) ?? false } : nil,
+            pagination: pagination,
+            sortedBy: { $0.processingDate > $1.processingDate }
         )
         
         print("responded with \(resultingPage.items.count) transactions")
         
         return resultingPage
+    }
+    
+    static let previewValue: TransparencyDataClient = Self { _, _ in
+        PaginatedResponse(items: [], pageNumber: 0, pageSize: 0, pageCount: 0, nextPage: 0, recordCount: 0)
+    }
+    transactions: { _, _, _, pagination in
+        let page = PaginatedResponse(
+            items: IdentifiedArrayOf<Transaction>.chartPreviewData.elements,
+            pageNumber: 0, pageSize: 0, pageCount: 0, nextPage: 0, recordCount: 0)
+        
+        return try TransparencyDataClient.splitOnPagesAndFilter(
+            originalResponse: page,
+            filter: nil,
+            pagination: pagination)
     }
 }
 
@@ -174,12 +190,15 @@ private extension TransparencyDataClient {
     static func splitOnPagesAndFilter<T: Identifiable>(
         originalResponse: PaginatedResponse<T>,
         filter: ((T) -> Bool)?,
-        pagination: PaginationParameters?) throws -> PaginatedResponse<T>
+        pagination: PaginationParameters?,
+        sortedBy: ((T,T) -> Bool)? = nil) throws -> PaginatedResponse<T>
     {
         // Since I couldn't achieve proper filtering and pagination from the server side,
         // I had to write them on the client side.
         
-        let result: [T] = originalResponse.items.filter(filter ?? { _ in true })
+        let result: [T] = originalResponse.items
+            .filter(filter ?? { _ in true })
+            .sorted(by: sortedBy ?? { _, _ in false })
         
         guard result.isEmpty == false else {
             return PaginatedResponse(items: [], pageNumber: 0, pageSize: 0, pageCount: 0, nextPage: 0, recordCount: 0)

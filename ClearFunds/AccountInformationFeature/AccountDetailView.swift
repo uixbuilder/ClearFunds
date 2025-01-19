@@ -117,6 +117,7 @@ struct AccountDetailView: View {
                 .buttonBorderShape(.capsule)
             }
         }
+        .alert($store.scope(state: \.alert, action: \.alert))
         .padding()
         .onAppear {
             store.send(.startLoadingTransactions)
