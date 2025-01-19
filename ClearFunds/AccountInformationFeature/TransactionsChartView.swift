@@ -13,22 +13,44 @@ import ComposableArchitecture
 struct TransactionsChartView: View {
     let transactions: IdentifiedArrayOf<Transaction>
     
-    let ruleStyle = StrokeStyle(
-        lineWidth: 1,
-        lineCap: .round,
-        lineJoin: .round,
-        miterLimit: 5,
-        dash: [10,10],
-        dashPhase: 1)
+    var groupedTransactions: [(date: Date, debit: Double, credit: Double)] {
+        let calendar = Calendar.current
+        
+        // Group transactions by month and year
+        let grouped = Dictionary(grouping: transactions) { transaction in
+            calendar.dateComponents([.year, .month], from: transaction.processingDate)
+        }
+        
+        // Calculate sums for debit and credit
+        return grouped.compactMap { (key, transactions) in
+            guard let date = calendar.date(from: key) else { return nil }
+            
+            let totalDebit = transactions
+                .filter { $0.amount.value < 0 }
+                .reduce(0) { $0 + $1.amount.value }
+            
+            let totalCredit = transactions
+                .filter { $0.amount.value > 0 }
+                .reduce(0) { $0 + $1.amount.value }
+            
+            return (date, totalDebit, totalCredit)
+        }
+        .sorted { $0.date < $1.date } // Sort by month
+    }
     
     var body: some View {
-        Chart(transactions) { transaction in
-            BarPlot(
-                transactions,
-                x: .value("Date", transaction.processingDate),
-                y: .value("Amount", abs(transaction.amount.value))
+        Chart(groupedTransactions, id: \.date) { entry in
+            BarMark(
+                x: .value("Date", entry.date),
+                y: .value("Debit", entry.debit)
             )
-            .foregroundStyle(by: .value("Type", transaction.amount.value > 0 ? "Credit" : "Debit"))
+            .foregroundStyle(.red)
+            
+            BarMark(
+                x: .value("Date", entry.date),
+                y: .value("Credit", entry.credit)
+            )
+            .foregroundStyle(.green)
         }
         .chartYAxis {
             AxisMarks(values: .automatic(desiredCount: 5)) { value in
@@ -36,10 +58,6 @@ struct TransactionsChartView: View {
                 AxisValueLabel(anchor: .leading).offset(x: 10)
             }
         }
-        .chartForegroundStyleScale([
-            "Credit" : .green.opacity(0.6),
-            "Debit": .red.opacity(0.6)
-        ])
     }
 }
 
@@ -53,9 +71,9 @@ struct TransactionsChartView: View {
 
 extension IdentifiedArray where Element == Transaction, ID == String {
     static var chartPreviewData: Self {
-        let result = (1...100)
-            .map { (amount: Int.random(in: -1000...1000),
-                    date: Date(timeIntervalSinceReferenceDate: TimeInterval($0 * 10000000))) }
+        let result = (1...60)
+            .map { (amount: Int.random(in: -1000...1500),
+                    date: Date(timeIntervalSinceReferenceDate: TimeInterval($0 * 800000))) }
             .map {
                 Transaction(
                     amount: .init(value: Double($0.amount), precision: 0, currency: "CZK"),
