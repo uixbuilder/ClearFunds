@@ -1,0 +1,1174 @@
+{
+    "pageNumber": 0,
+    "pageSize": 50,
+    "pageCount": 2,
+    "nextPage": 1,
+    "recordCount": 73,
+    "transactions": [
+        {
+            "amount": {
+                "value": -1.21,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-12-31T00:00:00",
+            "processingDate": "2018-01-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 6.35,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-12-31T00:00:00",
+            "processingDate": "2018-01-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-12-31T00:00:00",
+            "processingDate": "2018-01-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.12.2017 - 31.12.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -2,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60015",
+            "dueDate": "2017-12-31T00:00:00",
+            "processingDate": "2018-01-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. za odch. clearing"
+        },
+        {
+            "amount": {
+                "value": -5,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-12-31T00:00:00",
+            "processingDate": "2018-01-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": 125000,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "80110",
+            "dueDate": "2017-12-01T00:00:00",
+            "processingDate": "2017-12-01T00:00:00",
+            "sender": {
+                "accountNumber": "001943-0011221001",
+                "bankCode": "0710",
+                "iban": "CZ48 0710 0019 4300 1122 1001",
+                "variableSymbol": "236682017",
+                "constantSymbol": "0380",
+                "name": "MF"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úhrada"
+        },
+        {
+            "amount": {
+                "value": -0.97,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-11-30T00:00:00",
+            "processingDate": "2017-12-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 5.11,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-11-30T00:00:00",
+            "processingDate": "2017-12-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -2,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60015",
+            "dueDate": "2017-11-30T00:00:00",
+            "processingDate": "2017-12-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. za odch. clearing"
+        },
+        {
+            "amount": {
+                "value": -5,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "61529",
+            "dueDate": "2017-11-30T00:00:00",
+            "processingDate": "2017-12-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. S24 - domácí platba"
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-11-30T00:00:00",
+            "processingDate": "2017-12-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.11.2017 - 30.11.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -759,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "93551",
+            "dueDate": "2017-11-24T00:00:00",
+            "processingDate": "2017-11-24T00:00:00",
+            "sender": {
+                "accountNumber": "000000-6616192001",
+                "bankCode": "5500",
+                "iban": "CZ39 5500 0000 0066 1619 2001",
+                "variableSymbol": "1995846",
+                "constantSymbol": "308",
+                "description": "registrace domeny"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Domácí platba - S24/IB"
+        },
+        {
+            "amount": {
+                "value": -0.95,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-10-31T00:00:00",
+            "processingDate": "2017-11-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 5,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-10-31T00:00:00",
+            "processingDate": "2017-11-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -2,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60015",
+            "dueDate": "2017-10-31T00:00:00",
+            "processingDate": "2017-11-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. za odch. clearing"
+        },
+        {
+            "amount": {
+                "value": -5,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-10-31T00:00:00",
+            "processingDate": "2017-11-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-10-31T00:00:00",
+            "processingDate": "2017-11-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.10.2017 - 31.10.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": 125000,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "80110",
+            "dueDate": "2017-10-09T00:00:00",
+            "processingDate": "2017-10-09T00:00:00",
+            "sender": {
+                "accountNumber": "001943-0011221001",
+                "bankCode": "0710",
+                "iban": "CZ48 0710 0019 4300 1122 1001",
+                "variableSymbol": "236662017",
+                "constantSymbol": "6418",
+                "name": "MF"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úhrada"
+        },
+        {
+            "amount": {
+                "value": -0.78,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-09-30T00:00:00",
+            "processingDate": "2017-10-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 4.08,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-09-30T00:00:00",
+            "processingDate": "2017-10-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -2,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60015",
+            "dueDate": "2017-09-30T00:00:00",
+            "processingDate": "2017-10-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. za odch. clearing"
+        },
+        {
+            "amount": {
+                "value": -5,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "61529",
+            "dueDate": "2017-09-30T00:00:00",
+            "processingDate": "2017-10-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. S24 - domácí platba"
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-09-30T00:00:00",
+            "processingDate": "2017-10-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.09.2017 - 30.09.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -1600,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "93551",
+            "dueDate": "2017-09-29T00:00:00",
+            "processingDate": "2017-09-29T00:00:00",
+            "sender": {
+                "accountNumber": "000000-2108034535",
+                "bankCode": "2700",
+                "iban": "CZ49 2700 0000 0021 0803 4535",
+                "variableSymbol": "20170005",
+                "description": "tlumiceni CZJ"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Domácí platba - S24/IB"
+        },
+        {
+            "amount": {
+                "value": -0.8,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-08-31T00:00:00",
+            "processingDate": "2017-09-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 4.22,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-08-31T00:00:00",
+            "processingDate": "2017-09-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-08-31T00:00:00",
+            "processingDate": "2017-09-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.08.2017 - 31.08.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -0.8,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-07-31T00:00:00",
+            "processingDate": "2017-08-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 4.22,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-07-31T00:00:00",
+            "processingDate": "2017-08-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-07-31T00:00:00",
+            "processingDate": "2017-08-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.07.2017 - 31.07.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -0.47,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-06-30T00:00:00",
+            "processingDate": "2017-07-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 2.48,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-06-30T00:00:00",
+            "processingDate": "2017-07-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -6,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60015",
+            "dueDate": "2017-06-30T00:00:00",
+            "processingDate": "2017-07-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. za odch. clearing"
+        },
+        {
+            "amount": {
+                "value": -15,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-06-30T00:00:00",
+            "processingDate": "2017-07-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-06-30T00:00:00",
+            "processingDate": "2017-07-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.06.2017 - 30.06.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": 125000,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "80110",
+            "dueDate": "2017-06-27T00:00:00",
+            "processingDate": "2017-06-27T00:00:00",
+            "sender": {
+                "accountNumber": "001943-0011221001",
+                "bankCode": "0710",
+                "iban": "CZ48 0710 0019 4300 1122 1001",
+                "variableSymbol": "124352017",
+                "constantSymbol": "6418",
+                "name": "MF"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úhrada"
+        },
+        {
+            "amount": {
+                "value": 125000,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "80110",
+            "dueDate": "2017-06-20T00:00:00",
+            "processingDate": "2017-06-20T00:00:00",
+            "sender": {
+                "accountNumber": "001943-0011221001",
+                "bankCode": "0710",
+                "iban": "CZ48 0710 0019 4300 1122 1001",
+                "variableSymbol": "41682017",
+                "constantSymbol": "6418",
+                "name": "MF",
+                "description": "1403/4168/2017-201 VÝCHODOČEŠI"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úhrada"
+        },
+        {
+            "amount": {
+                "value": 10000,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "80110",
+            "dueDate": "2017-06-16T00:00:00",
+            "processingDate": "2017-06-16T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0006803541",
+                "bankCode": "0100",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "variableSymbol": "169668",
+                "constantSymbol": "308",
+                "name": "DEPRAG CZ A.S."
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úhrada"
+        },
+        {
+            "amount": {
+                "value": -0.36,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-05-31T00:00:00",
+            "processingDate": "2017-06-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 1.9,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-05-31T00:00:00",
+            "processingDate": "2017-06-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-05-31T00:00:00",
+            "processingDate": "2017-06-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.05.2017 - 31.05.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -2,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60015",
+            "dueDate": "2017-05-31T00:00:00",
+            "processingDate": "2017-06-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. za odch. clearing"
+        },
+        {
+            "amount": {
+                "value": -5,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-05-31T00:00:00",
+            "processingDate": "2017-06-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": 10000,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "80110",
+            "dueDate": "2017-05-30T00:00:00",
+            "processingDate": "2017-05-30T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0802657012",
+                "bankCode": "2700",
+                "iban": "CZ19 0270 0000 0008 0265 7012",
+                "specificSymbol": "12345",
+                "specificSymbolParty": "12345",
+                "variableSymbol": "12345",
+                "constantSymbol": "2345",
+                "name": "ALUCON S.R.O.",
+                "description": "Dar"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úhrada"
+        },
+        {
+            "amount": {
+                "value": -0.36,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "40900",
+            "dueDate": "2017-04-30T00:00:00",
+            "processingDate": "2017-05-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0000"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Daň z úroku"
+        },
+        {
+            "amount": {
+                "value": 1.92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "30500",
+            "dueDate": "2017-04-30T00:00:00",
+            "processingDate": "2017-05-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "specificSymbol": "0000000000",
+                "specificSymbolParty": "0000000000",
+                "constantSymbol": "0598"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Úrok kredit"
+        },
+        {
+            "amount": {
+                "value": -4,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60015",
+            "dueDate": "2017-04-30T00:00:00",
+            "processingDate": "2017-05-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. za odch. clearing"
+        },
+        {
+            "amount": {
+                "value": -15,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "61529",
+            "dueDate": "2017-04-30T00:00:00",
+            "processingDate": "2017-05-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Popl. S24 - domácí platba"
+        },
+        {
+            "amount": {
+                "value": -92,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "60000",
+            "dueDate": "2017-04-30T00:00:00",
+            "processingDate": "2017-05-01T00:00:00",
+            "sender": {
+                "accountNumber": "000000-0000000000",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "constantSymbol": "0158",
+                "description": "(01.04.2017 - 30.04.2017)"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Poplatky "
+        },
+        {
+            "amount": {
+                "value": -1300,
+                "precision": 0,
+                "currency": "CZK"
+            },
+            "type": "93551",
+            "dueDate": "2017-04-24T00:00:00",
+            "processingDate": "2017-04-24T00:00:00",
+            "sender": {
+                "accountNumber": "000035-5583010237",
+                "bankCode": "0100",
+                "iban": "CZ13 0800 0000 0029 0647 8309",
+                "variableSymbol": "20170001",
+                "description": "tlumoceni"
+            },
+            "receiver": {
+                "accountNumber": "000000-2906478309",
+                "bankCode": "0800",
+                "iban": "CZ13 0800 0000 0029 0647 8309"
+            },
+            "typeDescription": "Domácí platba - S24/IB"
+        }
+    ]
+}

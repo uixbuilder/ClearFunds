@@ -25,4 +25,18 @@ struct DomainModelsParsingTests {
         
         #expect(page.items.count > 0)
     }
+    
+    @Test
+    func transactionsParsing() async throws {
+        guard let pathString = Bundle(for: BundleHelper.self).path(forResource: "Transactions", ofType: "json") else {
+            fatalError("Transactions.json not found")
+        }
+        
+        let page = try TransparencyDataClient.jsonDecoder.decode(
+            PaginatedResponse<Transaction>.self,
+            from: Data(contentsOf: URL(fileURLWithPath: pathString))
+        )
+        
+        #expect(page.items.count > 0)
+    }
 }
