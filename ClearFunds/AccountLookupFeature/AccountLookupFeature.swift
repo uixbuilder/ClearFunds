@@ -18,6 +18,7 @@ struct AccountLookupFeature {
         var cachedAccounts: IdentifiedArrayOf<Account> = []
         var accountsIsCaching: Bool = false
         @Presents var alert: AlertState<Action.Alert>?
+        var path = StackState<AccountInformationFeature.State>()
     }
     
     enum Action {
@@ -25,6 +26,8 @@ struct AccountLookupFeature {
         case startLoadingAccounts
         case dataResponse(Result<PaginatedResponse<Account>, Error>)
         case alert(PresentationAction<Alert>)
+        case path(StackAction<AccountInformationFeature.State, AccountInformationFeature.Action>)
+        @CasePathable
         enum Alert: Equatable {
             case retryAccountCaching
         }
@@ -87,9 +90,16 @@ struct AccountLookupFeature {
                 state.query = query
                 state.accounts = filterAccounts(state)
                 return .none
+                
+            case .path:
+                return .none
+                
             }
         }
         .ifLet(\.alert, action: \.alert)
+        .forEach(\.path, action: \.path) {
+            AccountInformationFeature()
+        }
     }
     
     // MARK: - Private Methods

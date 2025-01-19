@@ -14,10 +14,10 @@ struct AccountLookupView: View {
     @State var query: String = ""
         
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             ZStack {
                 List(store.accounts) { account in
-                    NavigationLink(destination: AccountDetailView(account: account)) {
+                    NavigationLink(state: AccountInformationFeature.State(account: account)) {
                         HStack {
                             Text(account.name)
                             Spacer()
@@ -41,6 +41,8 @@ struct AccountLookupView: View {
                     }
                 }
             }
+        } destination: { store in
+            AccountDetailView(store: store)
         }
         .onAppear {
             store.send(.startLoadingAccounts)
