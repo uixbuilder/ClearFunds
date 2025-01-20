@@ -17,6 +17,7 @@ struct AccountLookupFeature {
         var accounts: IdentifiedArrayOf<Account> = []
         var cachedAccounts: IdentifiedArrayOf<Account> = []
         var accountsIsCaching: Bool = false
+        @Shared(.bookmarks) var bookmarks
     }
     @CasePathable
     enum Action: Equatable {
@@ -28,6 +29,7 @@ struct AccountLookupFeature {
         @CasePathable
         enum Delegate: Equatable {
             case cachingDidInterrupt(error: TransparencyDataClient.Error)
+            case bookmarkDidToggle(account: Account)
         }
     }
     

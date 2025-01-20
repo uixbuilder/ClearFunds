@@ -14,6 +14,58 @@ import ComposableArchitecture
 @MainActor
 struct AccountInformationFeatureTests {
     @Test
+    func loadedFirstEmptyPage() async throws {
+        let store = TestStore(
+            initialState: AccountInformationFeature.State(account: .mock(with: 0), isDataLoading: false))
+        { AccountInformationFeature() } withDependencies: {
+            $0.dataProvider = TransparencyDataClient(
+                accounts:{_, _ in fatalError()},
+                transactions: { _, _, _, _ in PaginatedResponse(items: [], pageNumber: 0, pageSize: 0, pageCount: 0, nextPage: 0, recordCount: 0) }
+            )
+        }
+        
+        await store.send(.startLoadingTransactions) {
+            $0.isDataLoading = true
+        }
+        
+        await store.receive(\.nextPageResponse) {
+            $0.isDataLoading = false
+        }
+    }
+    
+    @Test
+    func loadedNextPage() async throws {
+        let transactions = IdentifiedArrayOf(uniqueElements: IdentifiedArrayOf<Transaction>.chartPreviewData.elements.prefix(10))
+        let firstPageResponse: PaginatedResponse<Transaction> = .mockPageResponse(transactions.elements,
+                                                                                  pageSize: 5,
+                                                                                  pageNumber: 0)
+        
+        let secondPageResponse: PaginatedResponse<Transaction> = .mockPageResponse(transactions.elements,
+                                                                                   pageSize: 5,
+                                                                                   pageNumber: 1)
+        
+        let store = TestStore(
+            initialState: AccountInformationFeature.State(
+                account: .mock(with: 0),
+                isDataLoading: true
+            ))
+        { AccountInformationFeature() } withDependencies: {
+            $0.dataProvider = TransparencyDataClient(
+                accounts: {_,_ in fatalError()},
+                transactions: {_,_,_,_ in secondPageResponse})
+        }
+        
+        await store.send(.nextPageResponse(.success(firstPageResponse))) {
+            $0.transactions = .init(uniqueElements: firstPageResponse.items)
+        }
+        
+        await store.receive(.nextPageResponse(.success(secondPageResponse))) {
+            $0.isDataLoading = false
+            $0.transactions.append(contentsOf: secondPageResponse.items)
+        }
+    }
+    
+    @Test
     func startLoadingTransactions() async {
         let transactions: IdentifiedArrayOf<Transaction> = .chartPreviewData
         let response = PaginatedResponse(

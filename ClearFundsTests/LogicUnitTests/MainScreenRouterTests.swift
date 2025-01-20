@@ -14,29 +14,11 @@ import ComposableArchitecture
 @MainActor
 struct MainScreenRouterTests {
     @Test
-    func toggleFavorite() async {
-        let account = Account.mock(with: 0)
-        let store = TestStore(initialState: MainScreenRouter.State()) { MainScreenRouter() }
-        
-        await store.send(.toggleFavorite(account)) { _ in
-            store.state.$favoriteAccounts.withLock { favoriteAccounts in
-                favoriteAccounts = [account]
-            }
-        }
-        
-        await store.send(.toggleFavorite(account)) { _ in
-            store.state.$favoriteAccounts.withLock { favoriteAccounts in
-                favoriteAccounts = []
-            }
-        }
-    }
-    
-    @Test
     func cachingDidInterruptShowsAlert() async {
         let error = TransparencyDataClient.Error.apiError(.apiKeyNotFound)
         let store = TestStore(initialState: MainScreenRouter.State()) { MainScreenRouter() }
         
-        await store.send(.showLookupScreen(.delegate(.cachingDidInterrupt(error: error)))) {
+        await store.send(.lookupScreen(.delegate(.cachingDidInterrupt(error: error)))) {
             $0.alert = AlertState {
                 TextState("API key not found. Please set up WEB-API-key environment variable.")
             } actions: {
@@ -78,11 +60,11 @@ struct MainScreenRouterTests {
             $0.alert = nil
         }
         
-        await store.receive(\.showLookupScreen.resumeCaching) {
+        await store.receive(\.lookupScreen.resumeCaching) {
             $0.lookupScreen.accountsIsCaching = true
         }
         
-        await store.receive(\.showLookupScreen.nextPageResponse.success) {
+        await store.receive(\.lookupScreen.nextPageResponse.success) {
             $0.lookupScreen.accountsIsCaching = false
             $0.lookupScreen.accounts = IdentifiedArray(uniqueElements: mockResponse.items)
             $0.lookupScreen.cachedAccounts = IdentifiedArray(uniqueElements: mockResponse.items)
@@ -111,6 +93,51 @@ struct MainScreenRouterTests {
                     TextState("Cancel")
                 }
             }
+        }
+    }
+    
+    @Test
+    func popoverPresentationLogic() async throws {
+        let accountMock = Account.mock(with: 0)
+        let store = TestStore(initialState: MainScreenRouter.State()) { MainScreenRouter() }
+        
+        await store.send(.showPopover) {
+            $0.popover = $0.bookmarks
+        }
+        
+        await store.send(.popover(.presented(.accountDidSelect(accountMock)))) {
+            $0.path.append(.init(account: accountMock))
+            $0.popover = nil
+        }
+    }
+    
+    @Test
+    func alertPresentationLogic() async throws {
+        let alertMock = AlertState<MainScreenRouter.Action.Alert> {
+            TextState("")
+        } actions: {
+            ButtonState {
+                TextState("Try again")
+            }
+        }
+        let accountMock = Account.mock(with: 0)
+        var pathMock = StackState<AccountInformationFeature.State>()
+        pathMock.append(.init(account: accountMock))
+        let elementIDMock = pathMock.ids.first!
+        let store = TestStore(initialState: MainScreenRouter.State(path: pathMock, alert: alertMock)) { MainScreenRouter() }
+        withDependencies: {
+            $0.dataProvider = TransparencyDataClient {_,_ in fatalError() }
+            transactions: {_,_,_,_ in throw TransparencyDataClient.Error.unexpectedResponseBody }
+        }
+        
+        await store.send(.alert(.presented(.resumeLoading(id: elementIDMock)))) {
+            $0.alert = nil
+        }
+        
+        await store.receive(\.path[id: elementIDMock].resumeLoadingTransactions) { _ in
+            // It is necessary to check that the right action was received by the store only,
+            // as all child state changes already handled by appropriate tests.
+            store.exhaustivity = .off
         }
     }
 }

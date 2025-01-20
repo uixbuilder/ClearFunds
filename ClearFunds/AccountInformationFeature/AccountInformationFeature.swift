@@ -17,7 +17,7 @@ struct AccountInformationFeature {
         var transactions: IdentifiedArrayOf<Transaction> = []
         var isDataLoading: Bool = false
     }
-    
+    @CasePathable
     enum Action: Equatable {
         case startLoadingTransactions
         case nextPageResponse(Result<PaginatedResponse<Transaction>, TransparencyDataClient.Error>)

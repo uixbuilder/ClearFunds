@@ -16,15 +16,19 @@ struct MainScreenRouter {
     struct State: Equatable {
         var lookupScreen = AccountLookupFeature.State()
         var path = StackState<AccountInformationFeature.State>()
-        @Shared(.favorites) var favoriteAccounts
+        var bookmarks = BookmarksFeature.State()
         @Presents var alert: AlertState<Action.Alert>?
+        @Presents var popover: BookmarksFeature.State?
     }
-    
+    @CasePathable
     enum Action {
         case path(StackAction<AccountInformationFeature.State, AccountInformationFeature.Action>)
-        case showLookupScreen(AccountLookupFeature.Action)
-        case toggleFavorite(Account)
+        case lookupScreen(AccountLookupFeature.Action)
+        case bookmarks(BookmarksFeature.Action)
+        case showPopover
         case alert(PresentationAction<Alert>)
+        case popover(PresentationAction<BookmarksFeature.Action>)
+        @CasePathable
         enum Alert: Equatable {
             case retryCaching
             case resumeLoading(id: StackElementID)
@@ -32,37 +36,52 @@ struct MainScreenRouter {
     }
     
     var body: some ReducerOf<Self> {
-        Scope(state: \.lookupScreen, action: \.showLookupScreen) {
+        Scope(state: \.lookupScreen, action: \.lookupScreen) {
             AccountLookupFeature()
         }
+        Scope(state: \.bookmarks, action: \.bookmarks) {
+            BookmarksFeature()
+        }
+        
         Reduce { state, action in
             switch action {
-            case .toggleFavorite(let account):
-                state.$favoriteAccounts.withLock {
-                    if $0.remove(account) == nil {
-                        $0.append(account)
-                    }
-                }
-
-                return .none
-                
             case .path(.element(let id, .delegate(.transactionLoadingFailed(let error)))):
                 state.alert = makeAlertState(with: error, action: .resumeLoading(id: id))
+                return .none
+                
+            case .showPopover:
+                state.popover = state.bookmarks
                 return .none
                 
             case .path:
                 return .none
                 
-            case .showLookupScreen(.delegate(.cachingDidInterrupt(let error))):
+            case .lookupScreen(.delegate(.cachingDidInterrupt(let error))):
                 state.alert = makeAlertState(with: error, action: .retryCaching)
                 return .none
                 
-            case .showLookupScreen:
+            case .lookupScreen(.delegate(.bookmarkDidToggle(let bookmark))):
+                return .run { send in
+                    await send(.bookmarks(.toggleBookmark(bookmark)))
+                }
+                
+            case .lookupScreen:
+                return .none
+                
+            case .popover(.presented(.accountDidSelect(let account))):
+                state.path.append(AccountInformationFeature.State(account: account))
+                state.popover = nil
+                return .none
+                
+            case .bookmarks:
+                return .none
+                
+            case .popover:
                 return .none
                 
             case .alert(.presented(.retryCaching)):
                 return .run { send in
-                    await send(.showLookupScreen(.resumeCaching))
+                    await send(.lookupScreen(.resumeCaching))
                 }
                 
             case .alert(.presented(.resumeLoading(let id))):
@@ -73,6 +92,9 @@ struct MainScreenRouter {
             case .alert:
                 return .none
             }
+        }
+        .ifLet(\.$popover, action: \.popover) {
+            BookmarksFeature()
         }
         .ifLet(\.alert, action: \.alert)
         .forEach(\.path, action: \.path) {
@@ -94,6 +116,9 @@ struct MainScreenRouter {
             case TransparencyDataClient.Error.unsupportedHTTPStatus(let status):
                 return TextState("Unknown HTTP status: \(status)")
                 
+            case TransparencyDataClient.Error.unexpectedResponseBody:
+                return TextState("Upgrade to a newer version of the app.")
+                
             default:
                 return TextState("Unknown error: \(error)")
             }
@@ -106,11 +131,5 @@ struct MainScreenRouter {
                 TextState("Cancel")
             }
         }
-    }
-}
-
-extension SharedKey where Self == FileStorageKey<IdentifiedArrayOf<Account>>.Default {
-    static var favorites: Self {
-        Self[.fileStorage(.documentsDirectory.appending(component: "favorites.json")), default: []]
     }
 }
