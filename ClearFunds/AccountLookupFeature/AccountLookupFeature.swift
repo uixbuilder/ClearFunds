@@ -17,19 +17,17 @@ struct AccountLookupFeature {
         var accounts: IdentifiedArrayOf<Account> = []
         var cachedAccounts: IdentifiedArrayOf<Account> = []
         var accountsIsCaching: Bool = false
-        @Presents var alert: AlertState<Action.Alert>?
-        var path = StackState<AccountInformationFeature.State>()
     }
-    
-    enum Action {
+    @CasePathable
+    enum Action: Equatable {
         case queryDidChange(String)
         case startLoadingAccounts
-        case dataResponse(Result<PaginatedResponse<Account>, Error>)
-        case alert(PresentationAction<Alert>)
-        case path(StackAction<AccountInformationFeature.State, AccountInformationFeature.Action>)
+        case nextPageResponse(Result<PaginatedResponse<Account>, TransparencyDataClient.Error>)
+        case delegate(Delegate)
+        case resumeCaching
         @CasePathable
-        enum Alert: Equatable {
-            case retryAccountCaching
+        enum Delegate: Equatable {
+            case cachingDidInterrupt(error: TransparencyDataClient.Error)
         }
     }
     
@@ -48,17 +46,14 @@ struct AccountLookupFeature {
             case .startLoadingAccounts:
                 state.cachedAccounts = []
                 state.accountsIsCaching = true
-                return makeLoadPageEffect(state.query, page: 0)
+                return makeLoadPageEffect("", page: 0)
                 
-            case .alert(.presented(.retryAccountCaching)):
+            case .resumeCaching:
                 state.accountsIsCaching = true
                 let nextPageIndex = state.cachedAccounts.count / cachingPageSize
-                return makeLoadPageEffect(state.query, page:nextPageIndex)
-                
-            case .alert:
-                return .none
-                
-            case .dataResponse(.success(let paginatedAccounts)):
+                return makeLoadPageEffect("", page:nextPageIndex)
+                                
+            case .nextPageResponse(.success(let paginatedAccounts)):
                 state.cachedAccounts.append(contentsOf: paginatedAccounts.items)
                 
                 if state.cachedAccounts.count == 0 && paginatedAccounts.pageNumber == 0 {
@@ -71,16 +66,17 @@ struct AccountLookupFeature {
                 
                 if (paginatedAccounts.nextPage < paginatedAccounts.pageCount && paginatedAccounts.nextPage != 0) {
                     // There are more pages to load.
-                    return makeLoadPageEffect(state.query, page: paginatedAccounts.nextPage)
+                    return makeLoadPageEffect("", page: paginatedAccounts.nextPage)
                 }
                 
                 state.accountsIsCaching = false
                 return .none
                 
-            case .dataResponse(.failure(let error)):
+            case .nextPageResponse(.failure(let error)):
                 state.accountsIsCaching = false
-                state.alert = makeAlertState(with: error)
-                return .none
+                return .run { send in
+                    await send(.delegate(.cachingDidInterrupt(error: error)))
+                }
                 
             case .queryDidChange(let query):
                 // TODO: As this action might be called with high frequency,
@@ -91,53 +87,20 @@ struct AccountLookupFeature {
                 state.query = query
                 state.accounts = filterAccounts(state)
                 return .none
-                
-            case .path:
+
+            case .delegate:
                 return .none
-                
             }
-        }
-        .ifLet(\.alert, action: \.alert)
-        .forEach(\.path, action: \.path) {
-            AccountInformationFeature()
         }
     }
     
     // MARK: - Private Methods
     
-    private func makeAlertState(with error: any Error) -> AlertState<AccountLookupFeature.Action.Alert> {
-        return AlertState {
-            switch error {
-            case TransparencyDataClient.Error.apiError(.apiKeyNotFound):
-                return TextState("API key not found. Please set up WEB-API-key environment variable.")
-                
-            case TransparencyDataClient.Error.apiError(.tooManyRequests):
-                return TextState("Too many requests. Please try again later.")
-                
-            case TransparencyDataClient.Error.unknownStatus(let status):
-                return TextState("Unknown HTTP status: \(status)")
-                
-            default:
-                return TextState("Unknown error: \(error)")
-            }
-            
-        } actions: {
-            ButtonState(action: .retryAccountCaching) {
-                TextState("Try again")
-            }
-            ButtonState(role: .cancel) {
-                TextState("Cancel")
-            }
-        }
-    }
-    
-    private func makeLoadPageEffect(_ query: String, page: Int)
-    -> Effect<AccountLookupFeature.Action>
-    {
+    private func makeLoadPageEffect(_ query: String, page: Int) -> Effect<AccountLookupFeature.Action> {
         .run { send in
-            await send(.dataResponse(Result {
-                try await dataProvider.accounts(query, .init(page: page, pageSize: cachingPageSize))
-            }))
+            await send(.nextPageResponse(Result {
+                return try await dataProvider.accounts(query, .init(page: page, pageSize: cachingPageSize))
+            }.mapError({ $0 as! TransparencyDataClient.Error })))
         }
         .cancellable(id: CancelID.pageLoading, cancelInFlight: true)
     }
@@ -151,39 +114,5 @@ struct AccountLookupFeature {
             return state.cachedAccounts
         }
         return state.cachedAccounts.filter { $0.name.lowercased().contains(state.query.lowercased()) }
-    }
-}
-
-extension AccountLookupFeature.Action: Equatable {
-    static func == (lhs: AccountLookupFeature.Action, rhs: AccountLookupFeature.Action) -> Bool {
-        switch (lhs, rhs) {
-        case let (.queryDidChange(lhsQuery), .queryDidChange(rhsQuery)):
-            return lhsQuery == rhsQuery
-            
-        case let (.dataResponse(lhsResult), .dataResponse(rhsResult)):
-            return areResultsEqual(lhs: lhsResult, rhs: rhsResult)
-            
-        case let (.alert(lhsPage), .alert(rhsPage)):
-            return lhsPage == rhsPage
-            
-        default:
-            return false
-        }
-    }
-    
-    private static func areResultsEqual(
-        lhs: Result<PaginatedResponse<Account>, Error>,
-        rhs: Result<PaginatedResponse<Account>, Error>) -> Bool
-    {
-        switch (lhs, rhs) {
-        case let (.success(lhsResponse), .success(rhsResponse)):
-            return lhsResponse == rhsResponse
-            
-        case let (.failure(lhsError), .failure(rhsError)):
-            return String(describing: lhsError) == String(describing: rhsError)
-            
-        default:
-            return false
-        }
     }
 }

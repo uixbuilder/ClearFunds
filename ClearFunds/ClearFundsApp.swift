@@ -14,7 +14,7 @@ struct ClearFundsApp: App {
     let store = Store(initialState: .init()) { MainScreenRouter() }
     var body: some Scene {
         WindowGroup {
-            AccountLookupView(store: store.scope(state: \.lookupScreen, action: \.showLookupScreen))
+            RootView(store: store)
         }
     }
 }

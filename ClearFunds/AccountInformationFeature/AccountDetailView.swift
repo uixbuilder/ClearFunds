@@ -124,22 +124,6 @@ struct AccountDetailView: View {
                 }
             }
         }
-        .navigationTitle("Account Detail")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { store.send(.toggleFavoriteButtonTapped) }) {
-                    HStack {
-                        Text(store.isFavorite ? "Remove From Favorites" :"Add To Favorites")
-                        Image(systemName: store.isFavorite ? "star.fill" : "star")
-                            .foregroundStyle(Color.yellow)
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-            }
-        }
-        .alert($store.scope(state: \.alert, action: \.alert))
         .padding()
         .onAppear {
             store.send(.startLoadingTransactions)

@@ -14,40 +14,35 @@ struct AccountLookupView: View {
     @State var query: String = ""
         
     var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            ZStack {
-                List(store.accounts) { account in
-                    NavigationLink(state: AccountInformationFeature.State(account: account)) {
-                        HStack {
-                            Text(account.name)
-                            Spacer()
-                            Text("Balance: \(account.balance, format: .currency(code: account.currency ?? "USD"))")
-                        }
+        ZStack {
+            List(store.accounts) { account in
+                NavigationLink(state: AccountInformationFeature.State(account: account)) {
+                    HStack {
+                        Text(account.name)
+                        Spacer()
+                        Text("Balance: \(account.balance, format: .currency(code: account.currency ?? "USD"))")
                     }
                 }
             }
-            .listStyle(.plain)
-            .navigationTitle("Search for account")
-            .searchable(text: $query,
-                        placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "Type the name")
-            .onChange(of: query, { [store] _, newValue in
-                store.send(.queryDidChange(newValue))
-            })
-            .toolbar {
-                if store.state.accountsIsCaching {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        ProgressView()
-                    }
+        }
+        .listStyle(.plain)
+        .navigationTitle("Search for account")
+        .searchable(text: $query,
+                    placement: .navigationBarDrawer(displayMode: .always),
+                    prompt: "Type the name")
+        .onChange(of: query, { [store] _, newValue in
+            store.send(.queryDidChange(newValue))
+        })
+        .toolbar {
+            if store.state.accountsIsCaching {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    ProgressView()
                 }
             }
-        } destination: { store in
-            AccountDetailView(store: store)
         }
         .onAppear {
             store.send(.startLoadingAccounts)
         }
-        .alert($store.scope(state: \.alert, action: \.alert))
     }
 }
 
