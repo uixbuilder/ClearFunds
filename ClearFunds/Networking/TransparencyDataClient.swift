@@ -15,9 +15,12 @@ struct TransparencyDataClient {
      sandbox https://webapi.developers.erstegroup.com/api/csas/public/sandbox/v3/transparentAccounts
      production https://www.csas.cz/webapi/api/v3/transparentAccounts
      */
-    enum Error: Swift.Error {
+    @CasePathable
+    enum Error: Swift.Error, Equatable {
         case apiError(StatusCode)
-        case unknownStatus(Int)
+        case unsupportedHTTPStatus(Int)
+        case unexpectedResponseBody
+        case connectionURLErrorCode(URLError.Code)
         
         enum StatusCode: Int {
             case apiKeyNotFound = 412
@@ -61,7 +64,13 @@ extension TransparencyDataClient: DependencyKey {
         
         let request = try Self.request(with: "transparentAccounts", queryItems: queryItems)
         let data = try await Self.retrieveData(for: request)
-        let originalResponse = try Self.jsonDecoder.decode(PaginatedResponse<Account>.self, from: data)
+        let originalResponse: PaginatedResponse<Account>
+        do {
+            originalResponse = try Self.jsonDecoder.decode(PaginatedResponse<Account>.self, from: data)
+        } catch {
+            throw TransparencyDataClient.Error.unexpectedResponseBody
+        }
+        
         let resultingPage = try Self.splitOnPagesAndFilter(
             originalResponse: originalResponse,
             filter: filter?.isEmpty == false ? { $0.name.lowercased().contains(filter!.lowercased()) } : nil,
@@ -155,22 +164,27 @@ private extension TransparencyDataClient {
             .reduce([], { $0 + $1 })
     }
     
-    static func retrieveData(for request: URLRequest) async throws -> Data {
-        let (data, response) = try await URLSession.shared.data(for: request)
+    static func retrieveData(for request: URLRequest) async throws(TransparencyDataClient.Error) -> Data {
+        let result: (data: Data, response: URLResponse)
+        do {
+            result = try await URLSession.shared.data(for: request)
+        } catch {
+            throw .connectionURLErrorCode((error as? URLError)?.code ?? .unknown)
+        }
         
-        if let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode) == false {
+        if let response = result.response as? HTTPURLResponse, (200..<300).contains(response.statusCode) == false {
             if let statusError = Error.StatusCode(rawValue: response.statusCode) {
                 throw Error.apiError(statusError)
             }
             else {
-                throw Error.unknownStatus(response.statusCode)
+                throw Error.unsupportedHTTPStatus(response.statusCode)
             }
         }
         
-        return data
+        return result.data
     }
     
-    static func request(with path: String, queryItems: [URLQueryItem]?) throws -> URLRequest {
+    static func request(with path: String, queryItems: [URLQueryItem]?) throws(TransparencyDataClient.Error) -> URLRequest {
         guard let apiKey = ProcessInfo.processInfo.environment["WEB-API-key"] else {
             throw Error.apiError(.apiKeyNotFound)
         }
@@ -191,7 +205,7 @@ private extension TransparencyDataClient {
         originalResponse: PaginatedResponse<T>,
         filter: ((T) -> Bool)?,
         pagination: PaginationParameters?,
-        sortedBy: ((T,T) -> Bool)? = nil) throws -> PaginatedResponse<T>
+        sortedBy: ((T,T) -> Bool)? = nil) throws(TransparencyDataClient.Error) -> PaginatedResponse<T>
     {
         // Since I couldn't achieve proper filtering and pagination from the server side,
         // I had to write them on the client side.

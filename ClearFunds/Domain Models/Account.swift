@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct Account: Identifiable, Decodable, Equatable {
+struct Account: Identifiable, Codable, Equatable {
     var id: String { accountNumber }
     let accountNumber: String
     let bankCode: String

@@ -5,7 +5,6 @@
 //  Created by Igor Fedorov on 16.01.2025.
 //
 
-
 import Foundation
 import Testing
 import ComposableArchitecture
@@ -20,7 +19,7 @@ struct AccountLookupFeatureTests {
             AccountLookupFeature()
         } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
-                accounts: {_,_ in await .mockPageResponse(mockAccounts())},
+                accounts: {_,_ in .mockPageResponse(Account.mocks())},
                 transactions: {_,_,_,_ in fatalError()})
         }
         
@@ -31,7 +30,7 @@ struct AccountLookupFeatureTests {
     
     @Test
     func startLoadingAccountsSuccess() async {
-        let mockAccounts = mockAccounts()
+        let mockAccounts = Account.mocks()
         let mockResponse: PaginatedResponse<Account> = .mockPageResponse(mockAccounts)
         let store = TestStore(initialState: AccountLookupFeature.State()) {
             AccountLookupFeature()
@@ -46,7 +45,7 @@ struct AccountLookupFeatureTests {
             $0.accountsIsCaching = true
         }
         
-        await store.receive(.dataResponse(.success(mockResponse))) {
+        await store.receive(\.nextPageResponse.success, mockResponse) {
             $0.cachedAccounts = IdentifiedArray(uniqueElements: mockAccounts)
             $0.accounts = IdentifiedArray(uniqueElements: mockAccounts)
             $0.accountsIsCaching = false
@@ -68,19 +67,11 @@ struct AccountLookupFeatureTests {
             $0.accountsIsCaching = true
         }
         
-        await store.receive(.dataResponse(.failure(TransparencyDataClient.Error.apiError(.tooManyRequests)))) {
+        await store.receive(\.nextPageResponse.failure, .apiError(.tooManyRequests)) {
             $0.accountsIsCaching = false
-            $0.alert = AlertState {
-                TextState("Too many requests. Please try again later.")
-            } actions: {
-                ButtonState(action: .retryAccountCaching) {
-                    TextState("Try again")
-                }
-                ButtonState(role: .cancel) {
-                    TextState("Cancel")
-                }
-            }
         }
+        
+        await store.receive(\.delegate.cachingDidInterrupt, .apiError(.tooManyRequests))
     }
     
     @Test
@@ -107,22 +98,21 @@ struct AccountLookupFeatureTests {
             $0.cachedAccounts = []
         }
         
-        await store.receive(.dataResponse(.success(mockResponse))) {
+        await store.receive(\.nextPageResponse.success, mockResponse) {
             $0.accountsIsCaching = false
         }
     }
     
     @Test
     func retryAccountCaching() async {
-        let mockAccounts = mockAccounts(count: 10)
+        let mockAccounts = Account.mocks(count: 10)
         let firstPageResponse: PaginatedResponse<Account> = .mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 0)
         let secondPageResponse: PaginatedResponse<Account> = .mockPageResponse(mockAccounts, pageSize: 5, pageNumber: 1)
         
         let store = TestStore(
             initialState: AccountLookupFeature.State(
                 cachedAccounts: IdentifiedArray(uniqueElements: firstPageResponse.items),
-                accountsIsCaching: false,
-                alert: AlertState { TextState("Test") }
+                accountsIsCaching: false
             ))
         { AccountLookupFeature() } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
@@ -130,58 +120,14 @@ struct AccountLookupFeatureTests {
                 transactions: {_,_,_,_ in fatalError()})
         }
         
-        await store.send(.alert(.presented(.retryAccountCaching))) {
+        await store.send(\.resumeCaching) {
             $0.accountsIsCaching = true
-            $0.alert = nil
         }
         
-        await store.receive(.dataResponse(.success(secondPageResponse))) {
+        await store.receive(\.nextPageResponse.success, secondPageResponse) {
             $0.cachedAccounts = IdentifiedArray(uniqueElements: mockAccounts)
             $0.accounts = IdentifiedArray(uniqueElements: mockAccounts)
             $0.accountsIsCaching = false
         }
-    }
-    
-    // MARK: - Private Methods
-    
-    private func mockAccounts(count: Int = 5) -> [Account] {
-        (0..<count).map(Account.mock(with:))
-    }
-}
-
-extension Account {
-    static func mock(with id: Int) -> Account {
-        Account(
-            accountNumber: "\(id)",
-            bankCode: "0800",
-            transparencyFrom: Date(),
-            transparencyTo: Date(),
-            publicationTo: Date(),
-            actualizationDate: Date(),
-            balance: 100.20 * Double(id),
-            currency: "CZK",
-            name: "Account \(id)",
-            iban: "CZ000\(id)0000000000000000000"
-        )
-    }
-}
-
-extension PaginatedResponse {
-    static func mockPageResponse(_ mocks: [T], pageSize: Int? = nil, pageNumber: Int? = nil) -> Self {
-        let pageSize = pageSize ?? mocks.count
-        let pageNumber = pageNumber ?? 0
-        
-        let pages = stride(from: 0, to: mocks.count, by: pageSize).map {
-            Array(mocks[$0 ..< Swift.min($0 + pageSize, mocks.count)])
-        }
-        
-        return PaginatedResponse<T>(
-            items: pages[pageNumber],
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            pageCount: pages.count,
-            nextPage: pageNumber + 1 < pages.count ? pageNumber + 1 : 0,
-            recordCount: mocks.count
-        )
     }
 }

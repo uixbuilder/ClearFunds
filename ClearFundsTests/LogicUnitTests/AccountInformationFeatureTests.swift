@@ -39,23 +39,9 @@ struct AccountInformationFeatureTests {
             $0.transactions = []
         }
         
-        await store.receive(\.dataResponse) {
+        await store.receive(\.nextPageResponse.success) {
             $0.transactions.append(contentsOf: transactions)
             $0.isDataLoading = false
-        }
-    }
-    
-    @Test
-    func toggleFavoriteButtonTapped() async {
-        let account = Account.mock(with: 0)
-        let store = TestStore(
-            initialState: AccountInformationFeature.State(account: account))
-        { AccountInformationFeature() }
-        
-        await store.send(.toggleFavoriteButtonTapped)
-        
-        await store.receive(\.delegate.toggleFavoriteState) {
-            $0.isFavorite = true
         }
     }
     
@@ -80,7 +66,7 @@ struct AccountInformationFeatureTests {
             )
         }
         
-        await store.send(.dataResponse(.success(response))) {
+        await store.send(.nextPageResponse(.success(response))) {
             $0.transactions.append(contentsOf: transactions)
             $0.isDataLoading = false
         }
@@ -101,19 +87,11 @@ struct AccountInformationFeatureTests {
             $0.isDataLoading = true
         }
         
-        await store.receive(\.dataResponse.failure) {
+        await store.receive(\.nextPageResponse.failure, error) {
             $0.isDataLoading = false
-            $0.alert = AlertState {
-                TextState("Too many requests. Please try again later.")
-            } actions: {
-                ButtonState(action: .retryDetailsLoading) {
-                    TextState("Try again")
-                }
-                ButtonState(role: .cancel) {
-                    TextState("Cancel")
-                }
-            }
         }
+        
+        await store.receive(\.delegate.transactionLoadingFailed, error)
     }
     
     @Test
@@ -130,8 +108,7 @@ struct AccountInformationFeatureTests {
         let store = TestStore(
             initialState: AccountInformationFeature.State(
                 account: .mock(with: 0),
-                transactions: IdentifiedArray(uniqueElements: firstPageResponse.items),
-                alert: AlertState { TextState("Test") }
+                transactions: IdentifiedArray(uniqueElements: firstPageResponse.items)
             ))
         { AccountInformationFeature() } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
@@ -139,12 +116,11 @@ struct AccountInformationFeatureTests {
                 transactions: {_,_,_,_ in secondPageResponse})
         }
         
-        await store.send(.alert(.presented(.retryDetailsLoading))) {
+        await store.send(.resumeLoadingTransactions) {
             $0.isDataLoading = true
-            $0.alert = nil
         }
         
-        await store.receive(\.dataResponse.success) {
+        await store.receive(\.nextPageResponse.success) {
             $0.transactions = transactions
             $0.isDataLoading = false
         }
