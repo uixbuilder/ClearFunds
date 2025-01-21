@@ -24,7 +24,27 @@ struct TransactionRow: View {
     }
     
     let transaction: Transaction
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        return formatter
+    }()
+    
     var transactionType: TransactionType { transaction.amount.value > 0 ? .income : .expense }
+    var sharingText: String {
+        "Transaction at \(transaction.processingDate, formatter: dateFormatter) " +
+        "from: \(transaction.sender.name ?? "Unknown") - \(transaction.sender.accountNumber), " +
+        "to: \(transaction.receiver.name ?? "Unknown") - \(transaction.receiver.accountNumber), " +
+        "amount: \(transaction.amount.value.formatted(.currency(code: transaction.amount.currency)))"
+    }
+    
+    var shareButton: some View {
+        ShareLink(item: sharingText, subject: Text("Transaction Sharing")) {
+            Image(systemName: "paperplane.fill")
+        }
+        .padding(.leading, 10)
+        .frame(width: 40, height: 40)
+    }
 
     var body: some View {
         HStack {
@@ -68,6 +88,8 @@ struct TransactionRow: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
+            
+            shareButton
         }
     }
 }
@@ -131,4 +153,10 @@ extension Transaction {
             ),
             typeDescription: "Salary"
         )
+}
+
+extension String.StringInterpolation {
+    mutating func appendInterpolation(_ date: Date, formatter: DateFormatter) {
+        appendLiteral(formatter.string(from: date))
+    }
 }
