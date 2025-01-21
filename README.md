@@ -1,3 +1,6 @@
+[![Build check](https://github.com/uixbuilder/ClearFunds/actions/workflows/ios_release_build_check.yml/badge.svg)](https://github.com/uixbuilder/ClearFunds/actions/workflows/ios_release_build_check.yml)
+[![Tests](https://github.com/uixbuilder/ClearFunds/actions/workflows/ios_ipad_tests.yml/badge.svg)](https://github.com/uixbuilder/ClearFunds/actions/workflows/ios_ipad_tests.yml)
+
 ## Description
 An application for searching and analyzing the financial transparency of third parties.
 

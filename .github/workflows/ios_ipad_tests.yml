@@ -1,0 +1,22 @@
+name: iPad Simulator Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: macos-15
+
+    steps:
+      
+    # Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    # Run tests on iPad Pro Simulator with latest iOS
+    - name: Run tests on iPad Pro Simulator
+      run: ./.scripts/build-check.sh --scheme 'ClearFunds' --type test --device-type ipad
