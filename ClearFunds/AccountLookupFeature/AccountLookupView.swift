@@ -50,6 +50,9 @@ struct AccountLookupView: View {
             }
         }
         .listStyle(.plain)
+        .refreshable(action: {
+            store.send(.startLoadingAccounts)
+        })
         .navigationTitle("Search for account")
         .searchable(text: $query,
                     placement: .navigationBarDrawer(displayMode: .always),
@@ -65,7 +68,11 @@ struct AccountLookupView: View {
             }
         }
         .onAppear {
-            store.send(.startLoadingAccounts)
+            // TODO: In the real world, the initial account loading logic needs to be moved to an app-level logic
+            // or be part of persistent storage layer logic.
+            if store.accounts.isEmpty {
+                store.send(.startLoadingAccounts)
+            }
         }
     }
 }
