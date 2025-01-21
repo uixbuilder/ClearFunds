@@ -125,8 +125,6 @@ extension DependencyValues {
     }
 }
 
-// MARK: - Private Common Methods
-
 extension TransparencyDataClient {
     static func filterQueryItems(_ filter: String?) -> [URLQueryItem] {
         guard let filter else { return [] }

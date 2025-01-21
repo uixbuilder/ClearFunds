@@ -155,7 +155,7 @@ extension Transaction {
         )
 }
 
-extension String.StringInterpolation {
+private extension String.StringInterpolation {
     mutating func appendInterpolation(_ date: Date, formatter: DateFormatter) {
         appendLiteral(formatter.string(from: date))
     }

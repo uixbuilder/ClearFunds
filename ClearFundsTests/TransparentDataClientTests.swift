@@ -80,7 +80,7 @@ final class TransparencyDataClientTests: XCTestCase {
             _ = try await TransparencyDataClient.retrieveData(for: request)
             XCTFail("Expected to throw, but no error was thrown.")
         } catch {
-            XCTAssertEqual(error as! TransparencyDataClient.Error, .connectionURLErrorCode(.cannotFindHost))
+            XCTAssertEqual(error, .connectionURLErrorCode(.cannotFindHost))
         }
     }
     

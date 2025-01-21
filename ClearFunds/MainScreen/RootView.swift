@@ -14,14 +14,14 @@ struct RootView: View {
     
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            lookupView()
+            makeLookupView()
         } destination: { detailStore in
             makeDetailsView(with: detailStore)
         }
         .alert($store.scope(state: \.alert, action: \.alert))
     }
     
-    func lookupView() -> some View {
+    private func makeLookupView() -> some View {
         AccountLookupView(store: store.scope(state: \.lookupScreen, action: \.lookupScreen))
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -42,7 +42,7 @@ struct RootView: View {
             }
     }
     
-    func makeDetailsView(with detailsStore: Store<AccountInformationFeature.State, AccountInformationFeature.Action>)
+    private func makeDetailsView(with detailsStore: Store<AccountInformationFeature.State, AccountInformationFeature.Action>)
     -> some View
     {
         let bookmarksStore = store.scope(state: \.bookmarks, action: \.bookmarks)

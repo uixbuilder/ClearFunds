@@ -48,7 +48,7 @@ struct TransactionsChartView: View {
         }
     }
     
-    func groupTransactionsToChartData() -> [ChartBarData] {
+    private func groupTransactionsToChartData() -> [ChartBarData] {
         let calendar = Calendar.current
         
         // Group transactions by month and year
