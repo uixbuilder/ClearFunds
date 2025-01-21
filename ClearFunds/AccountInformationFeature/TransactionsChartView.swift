@@ -10,36 +10,24 @@ import Charts
 import ComposableArchitecture
 
 
+struct ChartBarData {
+    let date: Date
+    let debit: Double
+    let credit: Double
+}
+
 struct TransactionsChartView: View {
     let transactions: IdentifiedArrayOf<Transaction>
-    
-    var groupedTransactions: [(date: Date, debit: Double, credit: Double)] {
-        let calendar = Calendar.current
-        
-        // Group transactions by month and year
-        let grouped = Dictionary(grouping: transactions) { transaction in
-            calendar.dateComponents([.year, .month], from: transaction.processingDate)
-        }
-        
-        // Calculate sums for debit and credit
-        return grouped.compactMap { (key, transactions) in
-            guard let date = calendar.date(from: key) else { return nil }
-            
-            let totalDebit = transactions
-                .filter { $0.amount.value < 0 }
-                .reduce(0) { $0 + $1.amount.value }
-            
-            let totalCredit = transactions
-                .filter { $0.amount.value > 0 }
-                .reduce(0) { $0 + $1.amount.value }
-            
-            return (date, totalDebit, totalCredit)
-        }
-        .sorted { $0.date < $1.date } // Sort by month
-    }
+    @State var chartData = [ChartBarData]()
     
     var body: some View {
-        Chart(groupedTransactions, id: \.date) { entry in
+        Task {
+            // TODO: For bigger sets of the data, this approach is wasteful.
+            // Right now, it is just used as a showcase for pagination functionality.
+            // Probably after experimenting on the real datasets, grouping could be moved in a separate Chart reducer.
+            chartData = groupTransactionsToChartData()
+        }
+        return Chart(chartData, id: \.date) { entry in
             BarMark(
                 x: .value("Date", entry.date),
                 y: .value("Debit", entry.debit)
@@ -58,6 +46,33 @@ struct TransactionsChartView: View {
                 AxisValueLabel(anchor: .leading).offset(x: 10)
             }
         }
+    }
+    
+    func groupTransactionsToChartData() -> [ChartBarData] {
+        let calendar = Calendar.current
+        
+        // Group transactions by month and year
+        let grouped = Dictionary(grouping: transactions) { transaction in
+            calendar.dateComponents([.year, .month], from: transaction.processingDate)
+        }
+        
+        // Calculate sums for debit and credit
+        return grouped.compactMap { (key, transactions) in
+            guard let date = calendar.date(from: key) else {
+                return nil
+            }
+            
+            let totalDebit = transactions
+                .filter { $0.amount.value < 0 }
+                .reduce(0) { $0 + $1.amount.value }
+            
+            let totalCredit = transactions
+                .filter { $0.amount.value > 0 }
+                .reduce(0) { $0 + $1.amount.value }
+            
+            return ChartBarData(date: date, debit: totalDebit, credit: totalCredit)
+        }
+        .sorted { $0.date < $1.date } // Sort by month
     }
 }
 
