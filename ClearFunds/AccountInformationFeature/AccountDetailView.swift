@@ -131,7 +131,7 @@ struct AccountDetailView: View {
     }
 }
 
-#Preview("Loading") {
+#Preview {
     NavigationStack {
         AccountDetailView(
             store: Store(initialState: AccountInformationFeature.State(

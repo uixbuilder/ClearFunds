@@ -43,6 +43,44 @@ struct BookmarksView: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
+#Preview("Empty", traits: .sizeThatFitsLayout) {
     BookmarksView(store: Store(initialState: BookmarksFeature.State()) { BookmarksFeature() })
+}
+
+
+#Preview(traits: .sizeThatFitsLayout) {
+    BookmarksView(store: Store(initialState: BookmarksFeature.State(bookmarkAccounts: Shared(value: [
+        Account(
+            accountNumber: "000000000000",
+            bankCode: "0800",
+            transparencyFrom: Date(),
+            transparencyTo: Date(),
+            publicationTo: Date(),
+            actualizationDate: Date(),
+            balance: 134134234.03,
+            currency: "CZK",
+            name: "Pavel Kolař",
+            iban: "CZ00949494940409409"),
+        Account(
+            accountNumber: "000000000001",
+            bankCode: "0800",
+            transparencyFrom: Date(),
+            transparencyTo: Date(),
+            publicationTo: Date(),
+            actualizationDate: Date(),
+            balance: 134134234.03,
+            currency: "CZK",
+            name: "Pavel Kolař",
+            iban: "CZ00949494940409409"),
+        Account(
+            accountNumber: "000000000002",
+            bankCode: "0800",
+            transparencyFrom: Date(),
+            transparencyTo: Date(),
+            publicationTo: Date(),
+            actualizationDate: Date(),
+            balance: 134134234.03,
+            currency: "CZK",
+            name: "Pavel Kolař",
+            iban: "CZ00949494940409409")]))) { BookmarksFeature() })
 }
