@@ -140,4 +140,18 @@ struct MainScreenRouterTests {
             store.exhaustivity = .off
         }
     }
+    
+    @Test
+    func bookmarkTogglingDelegationLogic() async throws {
+        let accountMock = Account.mock(with: 0)
+        let store = TestStore(initialState: MainScreenRouter.State()) { MainScreenRouter() }
+        
+        await store.send(.lookupScreen(.delegate(.bookmarkDidToggle(account: accountMock))))
+        await store.receive(\.bookmarks.toggleBookmark, accountMock) {
+            _ = $0.lookupScreen.$bookmarks.withLock { bookmarks in
+                bookmarks.append(accountMock)
+            }
+            $0.bookmarks = BookmarksFeature.State(bookmarkAccounts: Shared(value: [accountMock]))
+        }
+    }
 }
