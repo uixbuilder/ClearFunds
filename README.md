@@ -3,7 +3,9 @@ An application for searching and analyzing the financial transparency of third p
 
 ## Requirements
 - Xcode 16, iOS 18
-- API key: The API key for access to Transparent REST API has to be set in the "WEB-API-key" environment variable of ClearFunds target. 
+- API key: The API key for access to Transparent REST API has to be set in the "WEB-API-key" environment variable of ClearFunds target.
+> [!WARNING]
+> Only *Sandbox* API keys are supported.
 
 ## Screenshots
 #### Portrait
