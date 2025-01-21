@@ -11,10 +11,6 @@ import ComposableArchitecture
 
 @DependencyClient
 struct TransparencyDataClient {
-    /* TODO: add production and sandbox environments
-     sandbox https://webapi.developers.erstegroup.com/api/csas/public/sandbox/v3/transparentAccounts
-     production https://www.csas.cz/webapi/api/v3/transparentAccounts
-     */
     @CasePathable
     enum Error: Swift.Error, Equatable {
         case apiError(StatusCode)
@@ -48,6 +44,8 @@ struct TransparencyDataClient {
         let page: Int
         let pageSize: Int
     }
+    
+    private(set) static var apiKey = ProcessInfo.processInfo.environment["WEB-API-key"]
     
     // filter is applied to description and name of account
     var accounts: @Sendable (_ filter: String?,_ pagination: PaginationParameters?) async throws -> PaginatedResponse<Account>
@@ -105,19 +103,7 @@ extension TransparencyDataClient: DependencyKey {
         return resultingPage
     }
     
-    static let previewValue: TransparencyDataClient = Self { _, _ in
-        PaginatedResponse(items: [], pageNumber: 0, pageSize: 0, pageCount: 0, nextPage: 0, recordCount: 0)
-    }
-    transactions: { _, _, _, pagination in
-        let page = PaginatedResponse(
-            items: IdentifiedArrayOf<Transaction>.chartPreviewData.elements,
-            pageNumber: 0, pageSize: 0, pageCount: 0, nextPage: 0, recordCount: 0)
-        
-        return try TransparencyDataClient.splitOnPagesAndFilter(
-            originalResponse: page,
-            filter: nil,
-            pagination: pagination)
-    }
+    static let previewValue = Self.makePreviewValue()
 }
 
 extension TransparencyDataClient {
@@ -139,7 +125,9 @@ extension DependencyValues {
     }
 }
 
-private extension TransparencyDataClient {
+// MARK: - Private Common Methods
+
+extension TransparencyDataClient {
     static func filterQueryItems(_ filter: String?) -> [URLQueryItem] {
         guard let filter else { return [] }
         
@@ -184,8 +172,12 @@ private extension TransparencyDataClient {
         return result.data
     }
     
+    static func setApiKeyForTestingPurposes(_ apiKey: String?) {
+        Self.apiKey = apiKey
+    }
+    
     static func request(with path: String, queryItems: [URLQueryItem]?) throws(TransparencyDataClient.Error) -> URLRequest {
-        guard let apiKey = ProcessInfo.processInfo.environment["WEB-API-key"] else {
+        guard let apiKey = Self.apiKey else {
             throw Error.apiError(.apiKeyNotFound)
         }
         
@@ -199,49 +191,5 @@ private extension TransparencyDataClient {
         var request =  URLRequest(url: url)
         request.setValue(apiKey, forHTTPHeaderField: "WEB-API-key")
         return request
-    }
-    
-    static func splitOnPagesAndFilter<T: Identifiable>(
-        originalResponse: PaginatedResponse<T>,
-        filter: ((T) -> Bool)?,
-        pagination: PaginationParameters?,
-        sortedBy: ((T,T) -> Bool)? = nil) throws(TransparencyDataClient.Error) -> PaginatedResponse<T>
-    {
-        // Since I couldn't achieve proper filtering and pagination from the server side,
-        // I had to write them on the client side.
-        
-        let result: [T] = originalResponse.items
-            .filter(filter ?? { _ in true })
-            .sorted(by: sortedBy ?? { _, _ in false })
-        
-        guard result.isEmpty == false else {
-            return PaginatedResponse(items: [], pageNumber: 0, pageSize: 0, pageCount: 0, nextPage: 0, recordCount: 0)
-        }
-        
-        if let pagination {
-            let pages = stride(from: 0, to: result.count, by: pagination.pageSize).map {
-                Array(result[$0 ..< Swift.min($0 + pagination.pageSize, result.count)])
-            }
-
-            guard pagination.page < pages.count else { // Simulate a server error for non-existent pages.
-                throw Error.apiError(.invalidParameters)
-            }
-            
-            return PaginatedResponse(
-                items: pages[pagination.page],
-                pageNumber: pagination.page,
-                pageSize: pagination.pageSize,
-                pageCount: pages.count,
-                nextPage: pagination.page + 1 < pages.count ? pagination.page + 1 : 0,
-                recordCount: result.count)
-        }
-        
-        return PaginatedResponse(
-            items: result,
-            pageNumber: 0,
-            pageSize: result.count,
-            pageCount: 1,
-            nextPage: 0,
-            recordCount: result.count)
     }
 }
