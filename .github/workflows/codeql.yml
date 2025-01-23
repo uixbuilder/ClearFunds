@@ -1,0 +1,56 @@
+name: CodeQL iOS
+'on':
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+  schedule:
+    - cron: 17 22 * * 0
+jobs:
+  analyze:
+    name: 'Analyze (${{ matrix.language }})'
+    runs-on: '${{ (matrix.language == ''swift'' && ''macos-15'') }}'
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+      
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode:
+          - 16.2
+        platform:
+          - iOS
+        language:
+          - swift
+          
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: '${{ matrix.language }}'
+          queries: +security-and-quality
+          
+      - name: Build
+        run: |
+          xcodebuild -scheme ClearFunds -skipMacroValidation -configuration Release -destination 'platform=iOS Simulator,name=iPad Pro 11-inch (M4),OS=18.0' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{matrix.language}}'
