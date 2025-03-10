@@ -15,16 +15,24 @@ import ComposableArchitecture
 struct AccountLookupFeatureTests {
     @Test
     func queryDidChange() async {
-        let store = TestStore(initialState: AccountLookupFeature.State()) {
+        let mocks = Account.mocks()
+        let expected = mocks[0]
+        let store = TestStore(initialState: AccountLookupFeature.State(cachedAccounts: IdentifiedArrayOf(uniqueElements: mocks))) {
             AccountLookupFeature()
         } withDependencies: {
             $0.dataProvider = TransparencyDataClient(
-                accounts: {_,_ in .mockPageResponse(Account.mocks())},
+                accounts: {_,_ in .mockPageResponse(mocks)},
                 transactions: {_,_,_,_ in fatalError()})
         }
+        var query: String = ""
+        for nextChar in expected.name {
+            query += String(nextChar)
+            await store.send(.queryDidChange(query))
+        }
         
-        await store.send(.queryDidChange("test")) {
-            $0.query = "test"
+        await store.receive(.processQueryDebounced(query: query), timeout: .milliseconds(300)) {
+            $0.query = query
+            $0.accounts = [expected]
         }
     }
     
