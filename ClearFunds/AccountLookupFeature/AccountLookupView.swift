@@ -18,9 +18,6 @@ struct AccountLookupView: View {
             List(store.accounts) { account in
                 NavigationLink(state: AccountInformationFeature.State(account: account)) {
                     HStack {
-                        // TODO: Workaround for cell separator indentation level.
-                        Text("").frame(width: 0)
-                        
                         VStack {
                             Button(action: { store.send(.delegate(.bookmarkDidToggle(account: account))) }) {
                                 VStack {
@@ -34,18 +31,18 @@ struct AccountLookupView: View {
                             .buttonStyle(.borderless)
                             .frame(width: 40, height: 30)
                             .padding(0)
-                            .padding(.trailing, 15)
+                            .padding(.leading, 5)
                             
                             Spacer()
                         }
                         .padding(0)
-                        
                         
                         Text(account.name)
                         Spacer()
                         Text("\(account.balance, format: .currency(code: account.currency ?? "USD"))")
                             .padding(.trailing, 20)
                     }
+                    .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
                 }
             }
         }
