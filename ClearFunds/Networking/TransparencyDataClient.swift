@@ -15,6 +15,7 @@ struct TransparencyDataClient: Loggable {
     enum Error: Swift.Error, Equatable {
         case apiError(StatusCode)
         case clientMisconfiguredError
+        case clientInternal(String)
         case unsupportedHTTPStatus(Int)
         case unexpectedResponseBody
         case connectionURLErrorCode(URLError.Code)
