@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 
 @Reducer
-struct AccountInformationFeature {
+struct AccountInformationFeature: Loggable {
     @ObservableState
     struct State: Equatable {
         let account: Account
@@ -86,7 +86,14 @@ struct AccountInformationFeature {
                     filter: nil,
                     sort: [.init(sortField: .processingDate, order: .desc)],
                     pagination: .init(page: page, pageSize: cachingPageSize))
-            }.mapError({ $0 as! TransparencyDataClient.Error })))
+            }.mapError({ error in
+                if let clientError = error as? TransparencyDataClient.Error {
+                    return clientError
+                } else {
+                    logger.error("Error type mismatch while loading accounts: \(error)")
+                    return TransparencyDataClient.Error.clientInternal(error.localizedDescription)
+                }
+            })))
         }
         .cancellable(id: CancelID.pageLoading, cancelInFlight: true)
     }

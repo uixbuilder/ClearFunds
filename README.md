@@ -3,6 +3,7 @@
 [![Tests](https://github.com/uixbuilder/ClearFunds/actions/workflows/ios_ipad_tests.yml/badge.svg)](https://github.com/uixbuilder/ClearFunds/actions/workflows/ios_ipad_tests.yml)
 
 [![CodeQL iOS](https://github.com/uixbuilder/ClearFunds/actions/workflows/codeql.yml/badge.svg)](https://github.com/uixbuilder/ClearFunds/actions/workflows/codeql.yml)
+[![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
 
 ## Description
 An application for searching and analyzing the financial transparency of third parties.

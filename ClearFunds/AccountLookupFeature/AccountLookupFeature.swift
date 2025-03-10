@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 
 @Reducer
-struct AccountLookupFeature {
+struct AccountLookupFeature: Loggable {
     @ObservableState
     struct State: Equatable {
         var query: String = ""
@@ -22,6 +22,7 @@ struct AccountLookupFeature {
     @CasePathable
     enum Action: Equatable {
         case queryDidChange(String)
+        case processQueryDebounced(query: String)
         case startLoadingAccounts
         case nextPageResponse(Result<PaginatedResponse<Account>, TransparencyDataClient.Error>)
         case delegate(Delegate)
@@ -32,6 +33,7 @@ struct AccountLookupFeature {
             case bookmarkDidToggle(account: Account)
         }
     }
+    struct QueryDebounceId: Hashable {}
     
     let cachingPageSize: Int = 5
     
@@ -79,13 +81,11 @@ struct AccountLookupFeature {
                 return .run { send in
                     await send(.delegate(.cachingDidInterrupt(error: error)))
                 }
-                
             case .queryDidChange(let query):
-                // TODO: As this action might be called with high frequency,
-                // it is necessary to add some debouncing for 'query' changes.
-                // However, for precise adjustments, it would be nice to check it on real data and experiment with pageSize and waiting time.
-                // Possible solutions could include using 'debounce' builder from Effect or ContinuousClock.
+                return .send(.processQueryDebounced(query: query))
+                    .debounce(id: QueryDebounceId(), for: .milliseconds(300), scheduler: DispatchQueue.main)
                 
+            case .processQueryDebounced(let query):
                 state.query = query
                 state.accounts = filterAccounts(state)
                 return .none
@@ -102,7 +102,14 @@ struct AccountLookupFeature {
         .run { send in
             await send(.nextPageResponse(Result {
                 return try await dataProvider.accounts(query, .init(page: page, pageSize: cachingPageSize))
-            }.mapError({ $0 as! TransparencyDataClient.Error })))
+            }.mapError({ error in
+                if let clientError = error as? TransparencyDataClient.Error {
+                    return clientError
+                } else {
+                    logger.error("Error type mismatch while loading accounts: \(error)")
+                    return TransparencyDataClient.Error.clientInternal(error.localizedDescription)
+                }
+            })))
         }
         .cancellable(id: CancelID.pageLoading, cancelInFlight: true)
     }

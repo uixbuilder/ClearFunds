@@ -73,7 +73,7 @@ final class TransparencyDataClientTests: XCTestCase {
     }
     
     func testRetrieveData_connectionErrorResponse() async {
-        let invalidURL = URL(string: "https://invalid-url.com")!
+        let invalidURL = URL(string: "https://very-invalid-url.com")!
         let request = URLRequest(url: invalidURL)
         
         do {
@@ -87,23 +87,18 @@ final class TransparencyDataClientTests: XCTestCase {
     func testRequest_withValidPathAndQueryItems() throws {
         let path = "accounts"
         let queryItems = [URLQueryItem(name: "filter", value: "active")]
+        let environment = try TransparencyDataClient.Environment.basedOnApiKey("mockApiKey")
         
-        TransparencyDataClient.setApiKeyForTestingPurposes("mockApiKey")
-        
-        let request = try TransparencyDataClient.request(with: path, queryItems: queryItems)
+        let request = try TransparencyDataClient.request(with: environment, path: path, queryItems: queryItems)
         
         XCTAssertTrue(request.url?.absoluteString.hasSuffix("?filter=active") ?? false)
         XCTAssertEqual(request.value(forHTTPHeaderField: "WEB-API-key"), "mockApiKey")
     }
     
     func testRequest_withMissingAPIKey() {
-        let path = "accounts"
-        let queryItems: [URLQueryItem]? = nil
-        
-        TransparencyDataClient.setApiKeyForTestingPurposes(nil)
-        
-        XCTAssertThrowsError(try TransparencyDataClient.request(with: path, queryItems: queryItems)) { error in
-            XCTAssertEqual(error as? TransparencyDataClient.Error, .apiError(.apiKeyNotFound))
+        unsetenv("WEB-API-key")
+        XCTAssertThrowsError(try TransparencyDataClient.Environment.basedOnEnvironmentKey()) { error in
+            XCTAssertEqual(error as? TransparencyDataClient.Error, .clientMisconfiguredError)
         }
     }
 }
