@@ -14,6 +14,7 @@ struct TransparencyDataClient: Loggable {
     @CasePathable
     enum Error: Swift.Error, Equatable {
         case apiError(StatusCode)
+        case clientMisconfiguredError
         case unsupportedHTTPStatus(Int)
         case unexpectedResponseBody
         case connectionURLErrorCode(URLError.Code)
@@ -23,6 +24,11 @@ struct TransparencyDataClient: Loggable {
             case tooManyRequests = 429
             case invalidParameters = 400
         }
+    }
+    
+    struct Environment {
+        let apiKey: String
+        let baseURL: URL
     }
 
     struct SortParameters: CustomStringConvertible {
@@ -45,63 +51,11 @@ struct TransparencyDataClient: Loggable {
         let pageSize: Int
     }
     
-    private(set) static var apiKey = ProcessInfo.processInfo.environment["WEB-API-key"]
-    
     // filter is applied to description and name of account
     var accounts: @Sendable (_ filter: String?,_ pagination: PaginationParameters?) async throws -> PaginatedResponse<Account>
     
     // filter is applied to sender.name, variableSymbol, constantSymbol and description
     var transactions: @Sendable (_ accountId: String,_ filter: String?,_ sort: [SortParameters]?,_ pagination: PaginationParameters?) async throws -> PaginatedResponse<Transaction>
-}
-
-extension TransparencyDataClient: DependencyKey {
-    static let liveValue: TransparencyDataClient = Self { filter, pagination in
-        logger.debug("requested accounts for '\(filter ?? "no filter")', page \(pagination?.page ?? 0)")
-        
-        var queryItems = Self.paginationQueryItems(pagination) + Self.filterQueryItems(filter)
-        
-        let request = try Self.request(with: "transparentAccounts", queryItems: queryItems)
-        let data = try await Self.retrieveData(for: request)
-        let originalResponse: PaginatedResponse<Account>
-        do {
-            originalResponse = try Self.jsonDecoder.decode(PaginatedResponse<Account>.self, from: data)
-        } catch {
-            throw TransparencyDataClient.Error.unexpectedResponseBody
-        }
-        
-        let resultingPage = try Self.splitOnPagesAndFilter(
-            originalResponse: originalResponse,
-            filter: filter?.isEmpty == false ? { $0.name.lowercased().contains(filter!.lowercased()) } : nil,
-            pagination: pagination
-        )
-        
-        logger.debug("responded with \(resultingPage.items.count) accounts, queried '\(filter ?? "no filter")', page \(resultingPage.pageNumber) out of \(resultingPage.pageCount) pages")
-        
-        return resultingPage
-    }
-    transactions: { accountId, filter, sorting, pagination in
-        logger.debug("requested transactions for account '\(accountId, privacy: .sensitive)', filter '\(filter ?? "none")', sorting '\(String(describing: sorting))', pagination \(String(describing: pagination))")
-        
-        var queryItems = Self.sortingQueryItems(sorting) +
-        Self.paginationQueryItems(pagination) +
-        Self.filterQueryItems(filter)
-        
-        let request = try Self.request(with: "transparentAccounts/\(accountId)/transactions", queryItems: queryItems)
-        let data = try await Self.retrieveData(for: request)
-        let originalResponse = try Self.jsonDecoder.decode(PaginatedResponse<Transaction>.self, from: data)
-        let resultingPage = try Self.splitOnPagesAndFilter(
-            originalResponse: originalResponse,
-            filter: filter?.isEmpty == false ? { $0.sender.name?.lowercased().contains(filter!.lowercased()) ?? false } : nil,
-            pagination: pagination,
-            sortedBy: { $0.processingDate > $1.processingDate }
-        )
-        
-        logger.debug("responded with \(resultingPage.items.count) transactions")
-        
-        return resultingPage
-    }
-    
-    static let previewValue = Self.makePreviewValue()
 }
 
 extension TransparencyDataClient {
@@ -114,13 +68,6 @@ extension TransparencyDataClient {
         decoder.dateDecodingStrategy = .formatted(formatter)
         return decoder
     }()
-}
-
-extension DependencyValues {
-    var dataProvider: TransparencyDataClient {
-        get { self[TransparencyDataClient.self] }
-        set { self[TransparencyDataClient.self] = newValue }
-    }
 }
 
 extension TransparencyDataClient {
@@ -170,24 +117,14 @@ extension TransparencyDataClient {
         return result.data
     }
     
-    static func setApiKeyForTestingPurposes(_ apiKey: String?) {
-        Self.apiKey = apiKey
-    }
-    
-    static func request(with path: String, queryItems: [URLQueryItem]?) throws(TransparencyDataClient.Error) -> URLRequest {
-        guard let apiKey = Self.apiKey else {
-            throw Error.apiError(.apiKeyNotFound)
-        }
-        
-        let apiBaseUrl = "https://webapi.developers.erstegroup.com/api/csas/public/sandbox/v3"
-        guard var components = URLComponents(string: apiBaseUrl) else { throw Error.apiError(.invalidParameters) }
-        
+    static func request(with environment: Environment, path: String, queryItems: [URLQueryItem]?) throws(TransparencyDataClient.Error) -> URLRequest {
+        let fullURL = environment.baseURL.appendingPathComponent(path)
+        guard var components = URLComponents(url: fullURL, resolvingAgainstBaseURL: true) else { throw Error.clientMisconfiguredError }
         components.queryItems = queryItems
-        components.path += "/" + path
-        guard let url = components.url else { throw Error.apiError(.invalidParameters) }
+        guard let url = components.url else { throw Error.clientMisconfiguredError }
         
         var request =  URLRequest(url: url)
-        request.setValue(apiKey, forHTTPHeaderField: "WEB-API-key")
+        request.setValue(environment.apiKey, forHTTPHeaderField: "WEB-API-key")
         return request
     }
 }
