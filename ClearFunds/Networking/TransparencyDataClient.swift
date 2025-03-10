@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 
 @DependencyClient
-struct TransparencyDataClient {
+struct TransparencyDataClient: Loggable {
     @CasePathable
     enum Error: Swift.Error, Equatable {
         case apiError(StatusCode)
@@ -56,7 +56,7 @@ struct TransparencyDataClient {
 
 extension TransparencyDataClient: DependencyKey {
     static let liveValue: TransparencyDataClient = Self { filter, pagination in
-        print("requested accounts for '\(filter ?? "no filter")', page \(pagination?.page ?? 0)")
+        logger.debug("requested accounts for '\(filter ?? "no filter")', page \(pagination?.page ?? 0)")
         
         var queryItems = Self.paginationQueryItems(pagination) + Self.filterQueryItems(filter)
         
@@ -75,14 +75,12 @@ extension TransparencyDataClient: DependencyKey {
             pagination: pagination
         )
         
-        print("responded with \(resultingPage.items.count) accounts, queried '\(filter ?? "no filter")'," +
-              "page \(resultingPage.pageNumber) out of \(resultingPage.pageCount) pages")
+        logger.debug("responded with \(resultingPage.items.count) accounts, queried '\(filter ?? "no filter")', page \(resultingPage.pageNumber) out of \(resultingPage.pageCount) pages")
         
         return resultingPage
     }
     transactions: { accountId, filter, sorting, pagination in
-        print("requested transactions for account '\(accountId)', filter '\(filter ?? "none")', " +
-              "sorting '\(String(describing: sorting))', pagination \(String(describing: pagination))")
+        logger.debug("requested transactions for account '\(accountId, privacy: .sensitive)', filter '\(filter ?? "none")', sorting '\(String(describing: sorting))', pagination \(String(describing: pagination))")
         
         var queryItems = Self.sortingQueryItems(sorting) +
         Self.paginationQueryItems(pagination) +
@@ -98,7 +96,7 @@ extension TransparencyDataClient: DependencyKey {
             sortedBy: { $0.processingDate > $1.processingDate }
         )
         
-        print("responded with \(resultingPage.items.count) transactions")
+        logger.debug("responded with \(resultingPage.items.count) transactions")
         
         return resultingPage
     }
@@ -155,10 +153,12 @@ extension TransparencyDataClient {
         do {
             result = try await URLSession.shared.data(for: request)
         } catch {
+            logger.error("Failed to fetch data from URL \(request.url?.absoluteString ?? "unknown")")
             throw .connectionURLErrorCode((error as? URLError)?.code ?? .unknown)
         }
         
         if let response = result.response as? HTTPURLResponse, (200..<300).contains(response.statusCode) == false {
+            logger.error("Response status code \(String(describing: result.response)) while fetching data from URL \(request.url?.absoluteString ?? "unknown")")
             if let statusError = Error.StatusCode(rawValue: response.statusCode) {
                 throw Error.apiError(statusError)
             }
