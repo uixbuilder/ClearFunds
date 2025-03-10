@@ -22,9 +22,17 @@ extension TransparencyDataClient: DependencyKey {
             throw TransparencyDataClient.Error.unexpectedResponseBody
         }
         
+        var filterBlock: ((Account) -> Bool)? = {
+            if let filter, filter.isEmpty == false {
+                return { $0.name.lowercased().contains(filter.lowercased()) }
+            }
+            
+            return nil
+        }()
+        
         let resultingPage = try Self.splitOnPagesAndFilter(
             originalResponse: originalResponse,
-            filter: filter?.isEmpty == false ? { $0.name.lowercased().contains(filter!.lowercased()) } : nil,
+            filter: filterBlock,
             pagination: pagination
         )
         
@@ -42,9 +50,24 @@ extension TransparencyDataClient: DependencyKey {
         let request = try Self.request(with: environment, path: "transparentAccounts/\(accountId)/transactions", queryItems: queryItems)
         let data = try await Self.retrieveData(for: request)
         let originalResponse = try Self.jsonDecoder.decode(PaginatedResponse<Transaction>.self, from: data)
+        
+        var filterBlock: ((Transaction) -> Bool)? = {
+            if let filter, filter.isEmpty == false {
+                return {
+                    if let senderName = $0.sender.name {
+                        return senderName.lowercased().contains(filter.lowercased())
+                    }
+                    
+                    return false
+                }
+            }
+            
+            return nil
+        }()
+                
         let resultingPage = try Self.splitOnPagesAndFilter(
             originalResponse: originalResponse,
-            filter: filter?.isEmpty == false ? { $0.sender.name?.lowercased().contains(filter!.lowercased()) ?? false } : nil,
+            filter: filterBlock,
             pagination: pagination,
             sortedBy: { $0.processingDate > $1.processingDate }
         )
