@@ -24,33 +24,39 @@ protocol PaginatableKeyed {
 }
 
 extension PaginatedResponse: Decodable where T: PaginatableKeyed, T: Decodable {
-    private struct DynamicCodingKeys: CodingKey {
-        var stringValue: String
-        var intValue: Int? { nil }
+    private enum CodingKeys: CaseIterable, CodingKey {
+        case items
+        case pageNumber
+        case pageSize
+        case pageCount
+        case nextPage
+        case recordCount
         
-        init?(stringValue: String) {
-            self.stringValue = stringValue
-        }
+        var stringValue: String { self.rawValue }
+        
+        var intValue: Int? { nil }
         
         init?(intValue: Int) {
             return nil
         }
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
-        guard let itemsKey = DynamicCodingKeys(stringValue: T.collectionKey) else {
-            throw DecodingError.dataCorruptedError(
-                forKey: DynamicCodingKeys(stringValue: T.collectionKey)!,
-                in: container,
-                debugDescription: "Invalid key for items"
-            )
+        
+        init?(rawValue: String) {
+            guard let keyCase = Self.allCases.first(where: { $0.rawValue == rawValue }) else {
+                return nil
+            }
+            
+            self = keyCase
         }
-        pageNumber = try container.decode(Int.self, forKey: DynamicCodingKeys(stringValue: "pageNumber")!)
-        pageSize = try container.decode(Int.self, forKey: DynamicCodingKeys(stringValue: "pageSize")!)
-        pageCount = try container.decode(Int.self, forKey: DynamicCodingKeys(stringValue: "pageCount")!)
-        nextPage = try container.decode(Int.self, forKey: DynamicCodingKeys(stringValue: "nextPage")!)
-        recordCount = try container.decode(Int.self, forKey: DynamicCodingKeys(stringValue: "recordCount")!)
-        items = try container.decode([T].self, forKey: itemsKey)
+        
+        var rawValue: String {
+            switch self {
+            case .items: return T.collectionKey
+            case .nextPage: return "nextPage"
+            case .pageCount: return "pageCount"
+            case .pageNumber: return "pageNumber"
+            case .recordCount: return "recordCount"
+            case .pageSize: return "pageSize"
+            }
+        }
     }
 }
