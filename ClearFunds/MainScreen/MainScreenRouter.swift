@@ -107,7 +107,8 @@ struct MainScreenRouter {
     private func makeAlertState(with error: any Error, action: Action.Alert) -> AlertState<MainScreenRouter.Action.Alert> {
         return AlertState {
             switch error {
-            case TransparencyDataClient.Error.apiError(.apiKeyNotFound):
+            case TransparencyDataClient.Error.apiError(.apiKeyNotFound),
+                TransparencyDataClient.Error.clientMisconfiguredError:
                 return TextState("API key not found. Please set up WEB-API-key environment variable.")
                 
             case TransparencyDataClient.Error.apiError(.tooManyRequests):
@@ -120,7 +121,7 @@ struct MainScreenRouter {
                 return TextState("Upgrade to a newer version of the app.")
                 
             default:
-                return TextState("Unknown error: \(error)")
+                return TextState("Unknown error: \(error.localizedDescription)")
             }
             
         } actions: {
